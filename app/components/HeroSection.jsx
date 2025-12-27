@@ -29,7 +29,7 @@ const HeroSection = () => {
                             </div>
 
                             <p className="text-xl sm:text-2xl text-black leading-tight max-w-lg font-medium">
-                                Fostering curiosity and innovation through inspiring educational exploration and discovery journeys.
+                                NAEEES Digital Portal is the official digital campus for Electrical & Electronics Engineering students. This is a centralized platform for learning resources, academic tracking, events, opportunities, and peer collaboration.
                             </p>
 
                             {/* CTA Button - Specific green and sharp shadow */}
@@ -73,7 +73,7 @@ const HeroSection = () => {
 
                             {/* Floating Element - Course Categories */}
                             <div className="absolute top-0 -right-4 lg:-right-20 flex flex-col items-end gap-3 z-20">
-                                {["Graphic Design", "UI/UX Design", "Animation", "Prototyping"].map((tag, i) => (
+                                {["Skill Acquisition", "Career Guidance", "Academic Discussions", "Project Showcase"].map((tag, i) => (
                                     <div
                                         key={tag}
                                         // Updated styling for sharper shadows and correct colors
@@ -116,65 +116,71 @@ const HeroSection = () => {
                     {/* Left Section: Stats */}
                     <div className="flex gap-8 lg:gap-12 shrink-0">
                         <div>
-                            <div className="text-5xl lg:text-6xl font-black text-black tracking-tight">99k+</div>
-                            <div className="text-base font-medium text-gray-500 mt-2">Satisfied customers</div>
+                            <div className="text-5xl lg:text-6xl font-black text-black tracking-tight font-montserrat">1k+</div>
+                            <div className="text-base font-medium text-gray-500 mt-2 font-inter">Students</div>
                         </div>
                         <div>
-                            <div className="text-5xl lg:text-6xl font-black text-black tracking-tight">10k+</div>
-                            <div className="text-base font-medium text-gray-500 mt-2">Supreme Assets</div>
+                            <div className="text-5xl lg:text-6xl font-black text-black tracking-tight font-montserrat">500+</div>
+                            <div className="text-base font-medium text-gray-500 mt-2 font-inter">Resources</div>
                         </div>
                     </div>
 
-                    {/* Center Section: Video Thumbnail */}
                     {/* Fixed: Adjusted width breakpoints. xl:w-[400px] fits better on 1280px screens than 480px */}
-                    <div className="relative w-[340px] h-[160px] xl:w-[400px] xl:h-[190px] 2xl:w-[480px] 2xl:h-[220px] rounded-full border-3 border-black overflow-hidden shrink-0 group cursor-pointer">
-                        <Image
-                            src="/Images/Hero Image 2.jpg"
-                            alt="Video thumbnail"
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-700"
-                        />
-                        {/* Play Button Overlay */}
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/5 group-hover:bg-black/10 transition-colors">
-                            <div className="w-16 h-16 lg:w-20 lg:h-20 bg-white/40 backdrop-blur-md rounded-full flex items-center justify-center border-2 border-white/60 shadow-sm transition-transform group-hover:scale-110">
-                                <svg className="w-6 h-6 lg:w-8 lg:h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8 5v14l11-7z" />
-                                </svg>
+                    {/* Center Section: Video Thumbnail */}
+                    <div className="w-[340px] h-[160px] xl:w-[400px] xl:h-[190px] 2xl:w-[480px] 2xl:h-[220px] shrink-0 group cursor-pointer">
+                        {/* Outer Shell: Creates the Border and White Gap */}
+                        <div className="w-full h-full rounded-full border-2 border-black bg-white p-1.5 transition-transform duration-300 group-hover:scale-[1.02]">
+                            {/* Inner Container: Holds the Image */}
+                            <div className="relative w-full h-full rounded-full overflow-hidden">
+                                <Image
+                                    src="/Images/Hero Image 2.jpg"
+                                    alt="Video thumbnail"
+                                    fill
+                                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                />
+                                {/* Play Button Overlay */}
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/5 group-hover:bg-black/10 transition-colors">
+                                    <div className="w-16 h-16 lg:w-20 lg:h-20 bg-white/40 backdrop-blur-md rounded-full flex items-center justify-center border-2 border-white/60 shadow-sm transition-transform group-hover:scale-110">
+                                        <svg className="w-6 h-6 lg:w-8 lg:h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M8 5v14l11-7z" />
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Right Section: Text and Icons */}
-<div className="flex flex-col gap-6 max-w-md shrink-0 xl:items-end xl:text-right">
-  <h3 className="font-bold text-3xl lg:text-4xl text-black leading-[1.1]">
-    We have 99+ online<br />courses to try this year
-  </h3>
+                    <div className="flex flex-col gap-6 max-w-md shrink-0 xl:items-end xl:text-right">
+                        <h3 className="font-bold text-3xl lg:text-4xl text-black leading-[1.1]">
+                            Explore our platform and start your journey today
+                        </h3>
 
-  {/* FIXED: Reduced overlap from -space-x-4 to -space-x-2 */}
-  <div className="flex items-center -space-x-2 xl:justify-end pl-2">
-    {/* Icon 1 */}
-    {/* FIXED: Added hard shadow: shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] and updated transition */}
-    <div className="relative z-0 w-12 h-12 lg:w-14 lg:h-14 border-3 border-black rounded-full flex items-center justify-center bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1 hover:shadow-sm hover:z-50">
-      <FaWrench className="w-5 h-5 lg:w-6 lg:h-6 text-black" />
-    </div>
-    {/* Icon 2 */}
-    <div className="relative z-10 w-12 h-12 lg:w-14 lg:h-14 border-3 border-black rounded-full flex items-center justify-center bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1 hover:shadow-sm hover:z-50">
-      <FaCode className="w-5 h-5 lg:w-6 lg:h-6 text-black" />
-    </div>
-    {/* Icon 3 */}
-    <div className="relative z-20 w-12 h-12 lg:w-14 lg:h-14 border-3 border-black rounded-full flex items-center justify-center bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1 hover:shadow-sm hover:z-50">
-      <FaClock className="w-5 h-5 lg:w-6 lg:h-6 text-black" />
-    </div>
-    {/* Icon 4 */}
-    <div className="relative z-30 w-12 h-12 lg:w-14 lg:h-14 border-3 border-black rounded-full flex items-center justify-center bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1 hover:shadow-sm hover:z-50">
-      <FaCertificate className="w-5 h-5 lg:w-6 lg:h-6 text-black" />
-    </div>
-    {/* Icon 5 */}
-    <div className="relative z-40 w-12 h-12 lg:w-14 lg:h-14 border-3 border-black rounded-full flex items-center justify-center bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1 hover:shadow-sm hover:z-50">
-      <FaGraduationCap className="w-6 h-6 lg:w-7 lg:h-7 text-black" />
-    </div>
-  </div>
-</div>
+                        {/* FIXED: Reduced overlap from -space-x-4 to -space-x-2 */}
+                        <div className="flex items-center -space-x-2 xl:justify-end pl-2">
+                            {/* Icon 1 */}
+                            {/* FIXED: Added hard shadow: shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] and updated transition */}
+                            <div className="relative z-0 w-12 h-12 lg:w-14 lg:h-14 border-3 border-black rounded-full flex items-center justify-center bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1 hover:shadow-sm hover:z-50">
+                                <FaWrench className="w-5 h-5 lg:w-6 lg:h-6 text-black" />
+                            </div>
+                            {/* Icon 2 */}
+                            <div className="relative z-10 w-12 h-12 lg:w-14 lg:h-14 border-3 border-black rounded-full flex items-center justify-center bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1 hover:shadow-sm hover:z-50">
+                                <FaCode className="w-5 h-5 lg:w-6 lg:h-6 text-black" />
+                            </div>
+                            {/* Icon 3 */}
+                            <div className="relative z-20 w-12 h-12 lg:w-14 lg:h-14 border-3 border-black rounded-full flex items-center justify-center bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1 hover:shadow-sm hover:z-50">
+                                <FaClock className="w-5 h-5 lg:w-6 lg:h-6 text-black" />
+                            </div>
+                            {/* Icon 4 */}
+                            <div className="relative z-30 w-12 h-12 lg:w-14 lg:h-14 border-3 border-black rounded-full flex items-center justify-center bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1 hover:shadow-sm hover:z-50">
+                                <FaCertificate className="w-5 h-5 lg:w-6 lg:h-6 text-black" />
+                            </div>
+                            {/* Icon 5 */}
+                            <div className="relative z-40 w-12 h-12 lg:w-14 lg:h-14 border-3 border-black rounded-full flex items-center justify-center bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1 hover:shadow-sm hover:z-50">
+                                <FaGraduationCap className="w-6 h-6 lg:w-7 lg:h-7 text-black" />
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
             </div>
