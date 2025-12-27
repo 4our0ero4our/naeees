@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { FaWrench, FaCode, FaClock, FaCertificate, FaGraduationCap } from "react-icons/fa";
 
 const HeroSection = () => {
@@ -11,38 +12,63 @@ const HeroSection = () => {
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 w-full h-full pb-20">
                 <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
                     {/* Left Side - Main Content */}
-                    <div className="space-y-8 relative z-10 pt-10 lg:pt-0 animate-fade-in-left">
+                    <motion.div
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="space-y-8 relative z-10 pt-10 lg:pt-0"
+                    >
                         {/* Main Headline */}
                         <div className="space-y-4 relative">
-                            <h1 className="font-heading font-black text-6xl sm:text-7xl lg:text-8xl xl:text-[7rem] leading-[0.9] text-black tracking-wide">
+                            <motion.h1
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.2, duration: 0.6 }}
+                                className="font-heading font-black text-6xl sm:text-7xl lg:text-8xl xl:text-[7rem] leading-[0.9] text-black tracking-wide"
+                            >
                                 NAEEES<br />Digital<br />Portal
-                            </h1>
+                            </motion.h1>
                         </div>
 
                         {/* Subtext area with decorative pills */}
                         <div className="space-y-6">
                             {/* Decorative horizontal pills - updated colors and layout */}
-                            <div className="flex items-center gap-3">
+                            <motion.div
+                                initial={{ opacity: 0, width: 0 }}
+                                animate={{ opacity: 1, width: "auto" }}
+                                transition={{ delay: 0.4, duration: 0.6 }}
+                                className="flex items-center gap-3"
+                            >
                                 <div className="h-6 w-14 bg-black rounded-full" />
                                 <div className="h-6 w-14 bg-[#008D5E] rounded-full" /> {/* Darker Green */}
                                 <div className="h-6 w-14 bg-[#22C55E] rounded-full" /> {/* Lighter Green */}
-                            </div>
+                            </motion.div>
 
-                            <p className="text-xl sm:text-2xl text-black leading-tight max-w-lg font-medium">
+                            <motion.p
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.5, duration: 0.6 }}
+                                className="text-xl sm:text-2xl text-black leading-tight max-w-lg font-medium"
+                            >
                                 NAEEES Digital Portal is the official digital campus for Electrical & Electronics Engineering students. This is a centralized platform for learning resources, academic tracking, events, opportunities, and peer collaboration.
-                            </p>
+                            </motion.p>
 
                             {/* CTA Button - Specific green and sharp shadow */}
-                            <div className="flex flex-wrap gap-4 pt-2">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.6, duration: 0.5 }}
+                                className="flex flex-wrap gap-4 pt-2"
+                            >
                                 <Link
                                     href="#"
                                     className="inline-block bg-[#22C55E] text-black px-10 py-4 rounded-full font-bold text-xl transition-all duration-300 transform hover:scale-105 border-3 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[3px]"
                                 >
                                     Getting Started
                                 </Link>
-                            </div>
+                            </motion.div>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Right Side - Visuals */}
                     <div className="relative h-[500px] lg:h-[700px] w-full flex items-center justify-center lg:justify-end mt-12 lg:mt-0 lg:pr-12 animate-fade-in-scale" style={{ animationDelay: "0.2s", opacity: 0 }}>

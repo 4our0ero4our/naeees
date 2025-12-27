@@ -105,7 +105,7 @@ const Navbar = () => {
         { label: "Event Calendar", href: "#", icon: <CalendarIcon /> },
         { label: "Register for Events", href: "#", icon: <PenIcon /> },
       ],
-      columns: 1,
+      columns: 2,
     },
     {
       id: "opportunities",
@@ -118,7 +118,7 @@ const Navbar = () => {
         { label: "Announcements", href: "#", icon: <MegaphoneIcon /> },
         { label: "Weekly Highlights", href: "#", icon: <StarIcon /> },
       ],
-      columns: 1,
+      columns: 2,
     },
     {
       id: "community",
@@ -130,7 +130,7 @@ const Navbar = () => {
         { label: "Face of the Week", href: "#", icon: <UserIcon /> },
         { label: "Student Spotlights", href: "#", icon: <SpotlightIcon /> },
       ],
-      columns: 1,
+      columns: 2,
     },
     {
       id: "about",
@@ -142,7 +142,7 @@ const Navbar = () => {
         { label: "Mission & Vision", href: "#", icon: <TargetIcon /> },
         { label: "Contact", href: "#", icon: <MailIcon /> },
       ],
-      columns: 1,
+      columns: 2,
     },
   ];
 
@@ -184,13 +184,12 @@ const Navbar = () => {
   return (
     <nav
       ref={navbarRef}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isVisible ? "translate-y-0" : "-translate-y-full"
-      } ${lastScrollY > 10 ? "bg-white/90 backdrop-blur-md shadow-sm" : "bg-transparent"}`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isVisible ? "translate-y-0" : "-translate-y-full"
+        } ${lastScrollY > 10 ? "bg-white/90 backdrop-blur-md shadow-sm" : "bg-transparent"}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20 lg:h-24">
-          
+
           {/* Logo Section */}
           <div className="flex items-center space-x-3 w-1/4 animate-slide-in-left" style={{ animationDelay: "0.1s", opacity: 0 }}>
             <Link href="/" className="flex items-center space-x-2">
@@ -221,15 +220,13 @@ const Navbar = () => {
                 onMouseLeave={handleMouseLeave}
               >
                 <button
-                  className={`px-3 py-2 text-base font-medium transition-all duration-300 relative group text-gray-600 hover:text-black ${
-                    activeMenu === item.id ? "text-black" : ""
-                  }`}
+                  className={`px-3 py-2 text-base font-medium transition-all duration-300 relative group text-gray-600 hover:text-black ${activeMenu === item.id ? "text-black" : ""
+                    }`}
                 >
                   {item.label}
                   <span
-                    className={`absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-black transition-all duration-300 ${
-                      activeMenu === item.id ? "opacity-100 scale-100" : "opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100"
-                    }`}
+                    className={`absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-black transition-all duration-300 ${activeMenu === item.id ? "opacity-100 scale-100" : "opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100"
+                      }`}
                   />
                 </button>
                 {activeMenu === item.id && (
@@ -283,7 +280,7 @@ const Navbar = () => {
                 <MobileMenuItem item={item} onLinkClick={() => setIsMobileMenuOpen(false)} />
               </div>
             ))}
-            
+
             {/* Mobile Auth Buttons */}
             <div className="flex flex-col gap-4 pt-8 border-t-2 border-dashed border-gray-200 mt-8">
               <Link
@@ -319,17 +316,16 @@ const MobileMenuItem = ({ item, onLinkClick }: { item: any; onLinkClick: () => v
       {/* Menu Header (Clickable) */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-300 ${
-          isOpen 
-            ? "bg-[#22C55E] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" 
+        className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-300 ${isOpen
+            ? "bg-[#22C55E] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
             : "bg-white border-transparent hover:bg-gray-50"
-        }`}
+          }`}
       >
         <span className={`text-lg font-black uppercase tracking-tight ${isOpen ? "text-black" : "text-gray-800"}`}>
           {item.label}
         </span>
         <div className={`w-8 h-8 rounded-full border-2 border-black flex items-center justify-center transition-transform duration-300 ${isOpen ? "bg-white rotate-180" : "bg-white"}`}>
-            <svg
+          <svg
             className="w-5 h-5 text-black"
             fill="none"
             strokeLinecap="round"
@@ -337,38 +333,37 @@ const MobileMenuItem = ({ item, onLinkClick }: { item: any; onLinkClick: () => v
             strokeWidth="3"
             viewBox="0 0 24 24"
             stroke="currentColor"
-            >
+          >
             <path d="M19 9l-7 7-7-7" />
-            </svg>
+          </svg>
         </div>
       </button>
 
       {/* Submenu Dropdown */}
-      <div 
-        className={`grid transition-all duration-300 ease-in-out ${
-            isOpen ? "grid-rows-[1fr] opacity-100 mt-4" : "grid-rows-[0fr] opacity-0 mt-0"
-        }`}
+      <div
+        className={`grid transition-all duration-300 ease-in-out ${isOpen ? "grid-rows-[1fr] opacity-100 mt-4" : "grid-rows-[0fr] opacity-0 mt-0"
+          }`}
       >
         <div className="overflow-hidden">
-            <div className="border-l-2 border-black ml-6 pl-6 py-2 space-y-4">
+          <div className="border-l-2 border-black ml-6 pl-6 py-2 space-y-4">
             {item.submenu.map((subItem: any, index: number) => (
-                <Link
+              <Link
                 key={index}
                 href={subItem.href}
                 onClick={onLinkClick}
                 className="group flex items-center gap-3 py-2"
-                >
+              >
                 <div className="w-8 h-8 rounded-full border-2 border-black bg-white flex items-center justify-center shrink-0 group-hover:bg-[#EAB308] transition-colors">
-                    <div className="w-4 h-4 text-black">
-                        {subItem.icon}
-                    </div>
+                  <div className="w-4 h-4 text-black">
+                    {subItem.icon}
+                  </div>
                 </div>
                 <span className="text-black font-bold text-base group-hover:translate-x-1 transition-transform">
-                    {subItem.label}
+                  {subItem.label}
                 </span>
-                </Link>
+              </Link>
             ))}
-            </div>
+          </div>
         </div>
       </div>
     </div>
