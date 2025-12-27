@@ -4,6 +4,7 @@ import FeatureSection from "./components/FeatureSection";
 import HowItWorksSection from "./components/HowItWorksSection";
 import AcademicPreviewSection from "./components/AcademicPreviewSection";
 import CommunitySection from "./components/CommunitySection";
+import OpportunitiesSection from "./components/OpportunitiesSection";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <HowItWorksSection />
       <AcademicPreviewSection />
       <CommunitySection />
+      <OpportunitiesSection />
     </main>
   );
 }
