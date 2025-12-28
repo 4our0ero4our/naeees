@@ -5,6 +5,7 @@ import HowItWorksSection from "./components/HowItWorksSection";
 import AcademicPreviewSection from "./components/AcademicPreviewSection";
 import CommunitySection from "./components/CommunitySection";
 import OpportunitiesSection from "./components/OpportunitiesSection";
+import FooterSectionWrapper from "./components/FooterSectionWrapper";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
       <AcademicPreviewSection />
       <CommunitySection />
       <OpportunitiesSection />
+      <FooterSectionWrapper />
     </main>
   );
 }
