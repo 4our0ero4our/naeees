@@ -239,14 +239,14 @@ const Navbar = () => {
           {/* Right Side Actions */}
           <div className="flex items-center justify-end space-x-6 w-1/4">
             <Link
-              href="#"
+              href="/register"
               className="hidden sm:block text-black hover:text-gray-600 transition-colors duration-300 text-sm font-medium animate-scale-in"
               style={{ animationDelay: "0.7s", opacity: 0 }}
             >
               Sign Up
             </Link>
             <Link
-              href="#"
+              href="/login"
               className="bg-[#22C55E] hover:bg-[#16A34A] text-black px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 transform hover:scale-105 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] animate-scale-in"
               style={{ animationDelay: "0.8s", opacity: 0 }}
             >
@@ -284,7 +284,7 @@ const Navbar = () => {
             {/* Mobile Auth Buttons */}
             <div className="flex flex-col gap-4 pt-8 border-t-2 border-dashed border-gray-200 mt-8">
               <Link
-                href="#"
+                href="/register"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="w-full text-center text-black py-3 text-lg font-bold hover:bg-gray-50 rounded-xl transition-colors animate-fade-in-up border-2 border-transparent hover:border-black"
                 style={{ animationDelay: `${menuItems.length * 0.1}s`, opacity: 0 }}
@@ -292,7 +292,7 @@ const Navbar = () => {
                 Sign Up
               </Link>
               <Link
-                href="#"
+                href="/login"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="w-full text-center bg-[#22C55E] text-black py-3 text-lg font-black uppercase tracking-wide rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-0.5 transition-all animate-fade-in-up"
                 style={{ animationDelay: `${menuItems.length * 0.1 + 0.1}s`, opacity: 0 }}
