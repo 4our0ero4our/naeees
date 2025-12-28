@@ -157,7 +157,7 @@ const Footer = () => {
           <p className="flex items-center gap-2">
             © {new Date().getFullYear()} NAEEES Digital Portal. 
             <span className="hidden md:inline">|</span> 
-            <span className="flex items-center gap-1">Made with <FaHeart className="text-[#EAB308]" /> by Engineer.</span>
+            <span className="flex items-center gap-1">Made with <FaHeart className="text-[#EAB308]" /> by 404.</span>
           </p>
           <div className="flex gap-8">
              <a href="#" className="hover:text-[#22C55E] transition-colors">Privacy Policy</a>
