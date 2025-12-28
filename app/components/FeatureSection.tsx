@@ -231,7 +231,7 @@ const CenterCard = ({ feature }: { feature: any }) => {
         animate={{ opacity: 1, scale: 1, rotate: 0 }}
         exit={{ opacity: 0, scale: 0.8, rotate: 2 }}
         transition={{ type: "spring", stiffness: 200, damping: 20 }}
-        className="w-full h-full bg-gray-600 border-3 border-black rounded-3xl p-8 shadow-[12px_12px_0px_0px_#22C55E] relative overflow-hidden flex flex-col justify-end"
+        className="w-full h-full bg-black border-4 border-black rounded-[2.5rem] p-8 shadow-[16px_16px_0px_0px_#22C55E] relative overflow-hidden flex flex-col justify-end"
       >
         
         {/* Background Decor */}
@@ -248,7 +248,7 @@ const CenterCard = ({ feature }: { feature: any }) => {
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         >
            {/* Decorative Circle behind image */}
-           <div className={`absolute inset-0 rounded-full ${feature.color} border-3 border-white/20 transform scale-90 translate-y-4`} />
+           <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[90%] rounded-full ${feature.color} border-4 border-black/20`} />
            
            <Image 
              src={feature.image} 
@@ -263,7 +263,7 @@ const CenterCard = ({ feature }: { feature: any }) => {
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="relative z-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 mt-[320px]"
+          className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-8"
         >
           <div className="flex items-center gap-3 mb-3">
              <div className={`w-10 h-10 ${feature.color} border-2 border-white rounded-full flex items-center justify-center`}>
