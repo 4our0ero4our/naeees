@@ -25,7 +25,7 @@ export default function LoginPage() {
             <AuthInput 
                 label="Email Address"
                 type="email"
-                placeholder="student@school.edu"
+                placeholder="4our0ero4our@st.futminna.edu.ng"
                 helperText="Use the email address you registered with."
                 icon={<FaEnvelope />}
             />

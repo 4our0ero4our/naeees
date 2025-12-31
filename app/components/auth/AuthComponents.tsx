@@ -39,19 +39,25 @@ export const AuthInput = ({ label, helperText, icon, ...props }: AuthInputProps)
 interface AuthButtonProps extends HTMLMotionProps<"button"> {
   children: React.ReactNode;
   variant?: "primary" | "secondary";
+  disabled?: boolean;
 }
 
-export const AuthButton = ({ children, variant = "primary", ...props }: AuthButtonProps) => {
+export const AuthButton = ({ children, variant = "primary", disabled, ...props }: AuthButtonProps) => {
   const isPrimary = variant === "primary";
 
   return (
     <motion.button
-      whileHover={{ scale: 1.02, y: -2, boxShadow: isPrimary ? "6px 6px 0px 0px black" : "6px 6px 0px 0px #EAB308" }}
-      whileTap={{ scale: 0.98, y: 0, boxShadow: "0px 0px 0px 0px black" }}
+      whileHover={!disabled ? { scale: 1.02, y: -2, boxShadow: isPrimary ? "6px 6px 0px 0px black" : "6px 6px 0px 0px #EAB308" } : {}}
+      whileTap={!disabled ? { scale: 0.98, y: 0, boxShadow: "0px 0px 0px 0px black" } : {}}
+      disabled={disabled}
       className={`w-full py-4 rounded-xl font-black text-lg uppercase tracking-wide border-2 border-black transition-all duration-200 
         ${isPrimary
-          ? "bg-[#22C55E] text-black shadow-[4px_4px_0px_0px_black]"
-          : "bg-white text-black shadow-[4px_4px_0px_0px_gray]"
+          ? disabled
+            ? "bg-gray-300 text-gray-500 shadow-[4px_4px_0px_0px_gray] cursor-not-allowed"
+            : "bg-[#22C55E] text-black shadow-[4px_4px_0px_0px_black]"
+          : disabled
+            ? "bg-gray-100 text-gray-400 shadow-[4px_4px_0px_0px_gray] cursor-not-allowed"
+            : "bg-white text-black shadow-[4px_4px_0px_0px_gray]"
         }`}
       {...props}
     >
