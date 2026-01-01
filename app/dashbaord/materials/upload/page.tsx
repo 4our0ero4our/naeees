@@ -1,16 +1,24 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaCloudUploadAlt, FaSave } from "react-icons/fa";
+import CustomDropdown from "@/app/components/CustomDropdown";
 
 export default function UploadPage() {
+  const [formData, setFormData] = useState({
+    level: "",
+    materialType: "",
+    semester: "",
+    visibility: ""
+  });
+
+  const handleDropdownChange = (key: keyof typeof formData, value: string) => {
+    setFormData(prev => ({ ...prev, [key]: value }));
+  };
+
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="mb-8">
-        <h1 className="font-heading font-black text-3xl text-black">Upload Academic Material</h1>
-        <p className="text-gray-600 font-medium">Add new resources to the student database.</p>
-      </div>
 
       <motion.form 
         initial={{ opacity: 0, y: 20 }}
@@ -38,23 +46,50 @@ export default function UploadPage() {
 
             {/* Selects */}
             <div>
-                <label className="block text-sm font-bold uppercase mb-2">Level</label>
-                <select className="w-full border-2 border-gray-300 rounded-lg p-3 font-medium focus:border-[#22C55E] focus:outline-none bg-white">
-                    <option>100L</option>
-                    <option>200L</option>
-                    <option>300L</option>
-                    <option>400L</option>
-                    <option>500L</option>
-                </select>
+                <CustomDropdown
+                    label="Level"
+                    options={["100L", "200L", "300L", "400L", "500L"]}
+                    value={formData.level}
+                    onChange={(value: string) => handleDropdownChange("level", value)}
+                    placeholder="Select Level"
+                />
             </div>
 
             <div>
-                <label className="block text-sm font-bold uppercase mb-2">Material Type</label>
-                <select className="w-full border-2 border-gray-300 rounded-lg p-3 font-medium focus:border-[#22C55E] focus:outline-none bg-white">
-                    <option>Lecture Note</option>
-                    <option>Past Question</option>
-                    <option>Textbook</option>
-                </select>
+                <CustomDropdown
+                    label="Material Type"
+                    options={["Lecture Note", "Past Question", "Textbook", "Assignment"]}
+                    value={formData.materialType}
+                    onChange={(value: string) => handleDropdownChange("materialType", value)}
+                    placeholder="Select Type"
+                />
+            </div>
+
+            <div>
+                <CustomDropdown
+                    label="Semester"
+                    options={["First Semester", "Second Semester"]}
+                    value={formData.semester}
+                    onChange={(value: string) => handleDropdownChange("semester", value)}
+                    placeholder="Select Semester"
+                />
+            </div>
+
+            {/* Description Input */}
+            <div>
+                <label className="block text-sm font-bold uppercase mb-2">Description</label>
+                <textarea placeholder="e.g. This is a lecture note for the course" className="w-full border-2 border-gray-300 rounded-lg p-3 font-medium focus:border-[#22C55E] focus:outline-none" />
+            </div>
+
+            {/* Visibility Input */}
+            <div>
+                <CustomDropdown
+                    label="Visibility"
+                    options={["All", "Members"]}
+                    value={formData.visibility}
+                    onChange={(value: string) => handleDropdownChange("visibility", value)}
+                    placeholder="Select Visibility"
+                />
             </div>
         </div>
 

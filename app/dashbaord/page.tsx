@@ -32,10 +32,9 @@ export default function DashboardOverview() {
       {/* 1. WELCOME BANNER */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
         <div>
-           <h1 className="font-heading font-black text-4xl lg:text-5xl text-black mb-2">
+           <h2 className="font-heading font-black text-3xl lg:text-4xl text-black mb-2">
              Hello, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#22C55E] to-[#16a34a]">Admin.</span>
-           </h1>
-           <p className="text-gray-600 font-medium text-lg">Here's what's happening in the department today.</p>
+           </h2>
         </div>
         <div className="hidden md:block text-right">
            <p className="font-black text-3xl text-black">{new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}</p>

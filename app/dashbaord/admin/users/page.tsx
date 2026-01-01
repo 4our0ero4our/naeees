@@ -13,21 +13,17 @@ const users = [
 export default function UserManagementPage() {
   return (
     <div className="space-y-10">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-            <h1 className="font-heading font-black text-3xl text-black">User Management</h1>
-            <p className="text-gray-600 font-medium">Manage student access and admin privileges.</p>
-        </div>
+      {/* <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="bg-[#EAB308]/20 text-[#EAB308] px-4 py-2 rounded-lg font-bold border border-[#EAB308] text-sm">
             Super Admin Access
         </div>
-      </div>
+      </div> */}
 
       {/* --- ADD ADMIN SECTION --- */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-black text-white p-6 rounded-2xl border-4 border-black shadow-[8px_8px_0px_0px_#22C55E]"
+        className="bg-black text-white p-6 rounded-2xl border-4 border-black shadow-[8px_8px_0px_0px_#22C55E] mb-10"
       >
         <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
             <FaUserPlus className="text-[#22C55E]" /> Grant Admin Access
