@@ -1,7 +1,7 @@
 //  The BRAIN: Configuration & Logic
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-import { z } from 'zod'; // Optional: Use zod for validation if you have it
+import { verifyCredentials } from '@/app/services/auth.service';
 
 // This defines how authentication works
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -11,36 +11,62 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         newUser: '/register', // Redirect here if a user is not registered
     },
     providers: [
-        // Option 1: Credentials (Email/Password)
+        // Credentials provider for email and password
         Credentials({
+            credentials: {
+                email: { type: 'email' },
+                password: { type: 'password' },
+            },
             async authorize(credentials) {
-                // 1. Validate inputs
-                const parsedCredentials = z
-                    .object({
-                        email: z.email(),
-                        password: z.string().min(8)
-                    }).safeParse(credentials);
+                if (!credentials || !credentials.email || !credentials.password) return null;
 
-                if (parsedCredentials.success) {
-                    const { email, password } = parsedCredentials.data;
+                // Verify the credentials using the database
+                const user = await verifyCredentials(
+                    credentials.email as string,
+                    credentials.password as string
+                );
 
-                    // 2. LOGIC: Check database for user here
-                    // const user = await getUserFromDb(email);
-                    // if (!user) return null;
+                // If the user is not found, return null
+                if (!user) return null;
 
-                    // 3. LOGIC: Compare passwords
-                    // const passwordsMatch = await bcrypt.compare(password, user.password);
-                    // if (passwordsMatch) return user;
-
-                    // MOCK FOR NOW (Delete this when you connect your DB):
-                    if (email === 'student@school.edu' && password === '123456') {
-                        return { id: '1', name: 'John Doe', email: email };
-                    }
-                }
-
-                console.log('Invalid credentials');
-                return null;
+                // If the user is found, return the user
+                return {
+                    id: user._id.toString(),
+                    email: user.email,
+                    role: user.role,
+                    membershipStatus: user.membershipStatus,
+                };
             },
         }),
     ],
+    session: {
+        strategy: 'jwt',
+    },
+    callbacks: {
+        async jwt({ token, user }) {
+            if (user) {
+                token.role = (user as any).role;
+                token.membershipStatus = (user as any).membershipStatus;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (session.user) {
+                (session.user as any).role = token.role;
+                (session.user as any).membershipStatus = token.membershipStatus;
+            }
+            return session;
+        },
+        async redirect({ url, baseUrl }) {
+            // If redirecting after sign in, go to dashboard
+            if (url === baseUrl || url === `${baseUrl}/login`) {
+                return `${baseUrl}/dashbaord`;
+            }
+            // Allow relative callback URLs
+            if (url.startsWith('/')) return `${baseUrl}${url}`;
+            // Allow callback URLs on the same origin
+            if (new URL(url).origin === baseUrl) return url;
+            return baseUrl;
+        },
+    },
 });

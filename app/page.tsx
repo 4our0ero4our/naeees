@@ -6,6 +6,7 @@ import AcademicPreviewSection from "./components/AcademicPreviewSection";
 import CommunitySection from "./components/CommunitySection";
 import OpportunitiesSection from "./components/OpportunitiesSection";
 import FooterSectionWrapper from "./components/FooterSectionWrapper";
+import EventsSection from "./components/EventsSection";
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
       <AcademicPreviewSection />
       <CommunitySection />
       <OpportunitiesSection />
+      <EventsSection />
       <FooterSectionWrapper />
     </main>
   );

@@ -24,9 +24,9 @@ export async function sendOTPEmail(email: string, otpCode: string) {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || "NAEEES Digital Portal <naeeesdigitalportal@resend.dev>",
+      from: process.env.RESEND_FROM_EMAIL || "NAEEES <onboarding@resend.dev>",
       to: [email],
-      subject: "Verify Your Email - NAEEES Digital Portal",
+      subject: "Action Required: Verify Your Student Email",
       html: `
         <!DOCTYPE html>
         <html>
@@ -35,50 +35,81 @@ export async function sendOTPEmail(email: string, otpCode: string) {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Email Verification</title>
           </head>
-          <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="background-color: #22C55E; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
-              <h1 style="color: #000; margin: 0; font-size: 24px;">NAEEES Digital Portal</h1>
-            </div>
-            <div style="background-color: #f9f9f9; padding: 30px; border: 3px solid #000; border-top: none; border-radius: 0 0 8px 8px;">
-              <h2 style="color: #000; margin-top: 0;">Verify Your Email Address</h2>
-              <p style="font-size: 16px;">Thank you for registering with NAEEES Digital Portal. Please use the following code to verify your email address:</p>
-              
-              <div style="background-color: #000; color: #EAB308; padding: 20px; text-align: center; border-radius: 8px; margin: 30px 0;">
-                <h1 style="font-size: 32px; letter-spacing: 8px; margin: 0; font-family: 'Courier New', monospace;">${otpCode}</h1>
-              </div>
-              
-              <p style="font-size: 14px; color: #666;">This code will expire in 10 minutes. If you didn't request this code, please ignore this email.</p>
-              
-              <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #ddd;">
-                <p style="font-size: 12px; color: #999; margin: 0;">NAEEES Digital Portal | Nigerian Association of Electrical and Electronics Engineering Students</p>
-              </div>
-            </div>
+          <body style="background-color: #F8F9FA; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 40px 0; margin: 0;">
+            
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td align="center">
+                  
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 500px; background-color: #ffffff; border: 4px solid #000000;">
+                    
+                    <tr>
+                      <td style="background-color: #000000; padding: 25px; text-align: center; border-bottom: 4px solid #000000;">
+                         <span style="color: #ffffff; font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; font-family: Arial, sans-serif;">
+                           NAEEES <span style="color: #22C55E;">Digital</span>
+                         </span>
+                      </td>
+                    </tr>
+  
+                    <tr>
+                      <td style="padding: 40px 30px;">
+                        
+                        <h1 style="color: #000000; margin: 0 0 20px 0; font-size: 28px; font-weight: 900; line-height: 1.1; font-family: Arial, sans-serif;">
+                          Verify Your<br/>Student Identity
+                        </h1>
+                        
+                        <p style="color: #444444; font-size: 16px; line-height: 1.6; margin-bottom: 30px; font-weight: 500;">
+                          You are attempting to register for the NAEEES Digital Portal. To secure your account, please enter the code below.
+                        </p>
+  
+                        <div style="background-color: #EAB308; border: 3px solid #000000; padding: 20px; text-align: center; margin-bottom: 30px; box-shadow: 6px 6px 0px 0px #000000;">
+                          <span style="font-family: 'Courier New', monospace; font-size: 32px; font-weight: 900; letter-spacing: 6px; color: #000000; display: block;">
+                            ${otpCode}
+                          </span>
+                        </div>
+  
+                        <p style="color: #666666; font-size: 13px; margin-bottom: 0; line-height: 1.5;">
+                          <strong>Note:</strong> This code expires in 10 minutes. If you did not initiate this request, please ignore this email.
+                        </p>
+  
+                      </td>
+                    </tr>
+  
+                    <tr>
+                      <td style="background-color: #F8F9FA; padding: 20px; text-align: center; border-top: 4px solid #000000;">
+                        <p style="font-size: 12px; color: #888888; margin: 0; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
+                          © NAEEES Digital Portal
+                        </p>
+                      </td>
+                    </tr>
+  
+                  </table>
+  
+                </td>
+              </tr>
+            </table>
+  
           </body>
         </html>
       `,
       text: `
-NAEEES Digital Portal - Email Verification
-
-Verify Your Email Address
-
-Thank you for registering with NAEEES Digital Portal. Please use the following code to verify your email address:
-
-${otpCode}
-
-This code will expire in 10 minutes. If you didn't request this code, please ignore this email.
-
-NAEEES Digital Portal | Nigerian Association of Electrical and Electronics Engineering Students
+  NAEEES Digital Portal
+  VERIFY YOUR STUDENT IDENTITY
+  
+  Your verification code is: ${otpCode}
+  
+  This code expires in 10 minutes.
       `,
     });
-
+  
     if (error) {
       throw new Error(`Failed to send email: ${error.message}`);
     }
-
+  
     return data;
-  } catch (error: any) {
-    console.error("Error sending OTP email:", error);
-    throw new Error(error.message || "Failed to send verification email");
-  }
+} catch (error: any) {
+  console.error("Error sending OTP email:", error);
+  throw new Error(error.message || "Failed to send verification email");
+}
 }
 
