@@ -19,6 +19,29 @@ export async function createMaterial(data: any) {
  * @throws {Error} if the materials are not found
  */
 export async function getMaterials(filters: any) {
-  await connectDB();
-  return Material.find(filters).sort({ createdAt: -1 });
+  try {
+    await connectDB();
+    return Material.find(filters)
+      .populate("uploadedBy", "fullName email")
+      .sort({ createdAt: -1 });
+  } catch (error) {
+    console.error("Error getting materials:", error);
+    throw new Error("Failed to get materials");
+  }
+}
+
+/**
+ * Delete a material
+ * @param id - The id of the material
+ * @returns the deleted material
+ * @throws {Error} if the material is not deleted
+ */
+export async function deleteMaterial(id: string) {
+  try {
+    await connectDB();
+    return Material.findByIdAndDelete(id);
+  } catch (error) {
+    console.error("Error deleting material:", error);
+    throw new Error("Failed to delete material");
+  }
 }

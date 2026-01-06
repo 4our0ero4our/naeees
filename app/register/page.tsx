@@ -7,13 +7,14 @@ import Link from "next/link";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import AuthLayout from "@/app/components/auth/AuthLayout";
 import { AuthInput, AuthButton, FormSectionHeader } from "@/app/components/auth/AuthComponents";
-import { FaUser, FaIdCard, FaCheckCircle, FaArrowRight, FaArrowLeft, FaEnvelope, FaClock } from "react-icons/fa";
+import { FaUser, FaIdCard, FaCheckCircle, FaArrowRight, FaArrowLeft, FaEnvelope, FaClock, FaExclamationTriangle } from "react-icons/fa";
 import CustomAlert from "../components/CustomAlert";
 
 export default function RegisterPage() {
     const router = useRouter();
     const [step, setStep] = useState<number>(1);
     const [isMember, setIsMember] = useState<boolean | null>(null);
+    const [isStudentVerified, setIsStudentVerified] = useState<boolean>(false);
     const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false);
     const [otpCode, setOtpCode] = useState<string>("");
     const [isSendingOTP, setIsSendingOTP] = useState<boolean>(false);
@@ -59,41 +60,69 @@ export default function RegisterPage() {
     };
 
     const handleCreateAccount = async () => {
-        if (userData.fullName 
-            && userData.email 
-            && userData.matricNumber 
-            && userData.password 
-            && userData.confirmPassword 
-            && userData.role 
-            && userData.membershipStatus 
-            && userData.terms
-            && isMember === true) {
-            try {
-                const response = await axios.post("/api/auth/register", userData);
-                if (response.status === 201) {
-                    setAlert({
-                        isOpen: true,
-                        type: "success",
-                        title: "Account created successfully",
-                        message: "Your account has been created successfully",
-                    });
-                }
-            } catch (error: any) {
+        // Check if all required fields are filled
+        if (!userData.fullName 
+            || !userData.email 
+            || !userData.matricNumber 
+            || !userData.password 
+            || !userData.confirmPassword 
+            || !userData.role 
+            || !userData.membershipStatus 
+            || !userData.terms) {
+            setAlert({
+                isOpen: true,
+                type: "error",
+                title: "Missing Information",
+                message: "Please fill in all the required fields",
+            });
+            return;
+        }
+
+        // Check if passwords match
+        if (userData.password !== userData.confirmPassword) {
+            setAlert({
+                isOpen: true,
+                type: "error",
+                title: "Password Mismatch",
+                message: "Your passwords do not match. Please check and try again.",
+            });
+            return;
+        }
+
+        // Verify that either membership or studentship has been verified
+        // isMember === true means verified member
+        // isMember === false && isStudentVerified === true means verified non-member student
+        if (isMember !== true && !(isMember === false && isStudentVerified === true)) {
+            setAlert({
+                isOpen: true,
+                type: "error",
+                title: "Verification Required",
+                message: "Please verify your membership or studentship status before creating an account",
+            });
+            return;
+        }
+
+        try {
+            const response = await axios.post("/api/auth/register", userData);
+            if (response.status === 201) {
                 setAlert({
                     isOpen: true,
-                    type: "error",
-                    title: "Failed to create account",
-                    message: error.response?.data?.error || "An error occurred",
+                    type: "success",
+                    title: "Account created successfully",
+                    message: "Your account has been created successfully",
                 });
+                // Optionally redirect to login after a delay
+                setTimeout(() => {
+                    router.push("/login");
+                }, 2000);
             }
-        } else {
+        } catch (error: any) {
             setAlert({
                 isOpen: true,
                 type: "error",
                 title: "Failed to create account",
-                message: "Please fill in all the fields and verify your membership",
+                message: error.response?.data?.error || "An error occurred",
             });
-            return;
         }
     }
 
@@ -222,6 +251,7 @@ export default function RegisterPage() {
             
             if (response.data.isMember === true) {
                 setIsMember(true);
+                setIsStudentVerified(false); // Reset studentship verification when membership is verified
                 setUserData({ ...userData, membershipStatus: "member" });
                 setAlert({
                     isOpen: true,
@@ -229,33 +259,74 @@ export default function RegisterPage() {
                     title: "Membership Verified",
                     message: "Your matric number has been verified as a NAEEES member",
                 });
-                router.push("/dashboard");
-            } else if (response.data.isMember === false) {
-                setIsMember(false);
+            } else {
+                // If not a member, reset state but don't allow proceeding
+                setIsMember(null);
+                setIsStudentVerified(false);
                 setUserData({ ...userData, membershipStatus: "non-member" });
                 setAlert({
                     isOpen: true,
                     type: "info",
                     title: "Not a Member",
-                    message: "This matric number is not registered as a NAEEES member",
+                    message: "This matric number is not registered as a NAEEES member. You can still verify your studentship instead.",
                 });
-            } else {
-                setAlert({
-                    isOpen: true,
-                    type: "error",
-                    title: "Verification Failed",
-                    message: "Failed to verify membership. Please try again.",
-                });
-                setIsMember(null);
-                setUserData({ ...userData, membershipStatus: "non-member" });
             }
         } catch (error: any) {
-            setIsMember(false);
+            setIsMember(null);
+            setIsStudentVerified(false);
             setAlert({
                 isOpen: true,
                 type: "error",
                 title: "Verification Failed",
                 message: error.response?.data?.error || "Failed to verify membership. Please try again.",
+            });
+        }
+    }
+
+    const handleVerifyStudentship = async (data: { email: string, matricNumber: string }) => {
+        if (!data.email || !data.matricNumber) {
+            setAlert({
+                isOpen: true,
+                type: "warning",
+                title: "Missing Information",
+                message: "Please fill in your email and matric number first",
+            });
+            return;
+        }
+
+        try {
+            const response = await axios.post("/api/auth/verify-studentship", {
+                email: data.email,
+                matricNumber: data.matricNumber,
+            });
+            if (response.data.isStudent === true) {
+                setIsMember(false); // Explicitly set to false for verified non-member
+                setIsStudentVerified(true); // Mark studentship as verified
+                setUserData({ ...userData, membershipStatus: "non-member" });
+                setAlert({
+                    isOpen: true,
+                    type: "success",
+                    title: "Studentship Confirmed",
+                    message: "Your studentship has been confirmed as a student of the Federal University of Technology, Minna",
+                });
+            } else {
+                setIsMember(null);
+                setIsStudentVerified(false);
+                setAlert({
+                    isOpen: true,
+                    type: "error",
+                    title: "Not a Student",
+                    message: "This matric number is not registered as a student of the Federal University of Technology, Minna",
+                });
+            }
+        } catch (error: any) {
+            setIsMember(null);
+            setIsStudentVerified(false);
+            setAlert({
+                isOpen: true,
+                type: "error",
+                title: "Failed to Confirm Studentship",
+                message: error.response?.data?.error || "Failed to confirm studentship. Please try again.",
             });
         }
     }
@@ -470,14 +541,14 @@ export default function RegisterPage() {
 
                                     {/* Non-Member Option */}
                                     <div
-                                        onClick={() => setIsMember(false)}
-                                        className={`cursor-pointer border-3 rounded-xl p-6 transition-all duration-200 relative overflow-hidden group ${isMember === false ? 'border-black bg-gray-50 shadow-[4px_4px_0px_0px_black]' : 'border-gray-200 hover:border-black hover:shadow-md'}`}
+                                        onClick={() => handleVerifyStudentship({ email: userData.email, matricNumber: userData.matricNumber })}
+                                        className={`cursor-pointer border-3 rounded-xl p-6 transition-all duration-200 relative overflow-hidden group ${isMember === false && isStudentVerified ? 'border-black bg-gray-50 shadow-[4px_4px_0px_0px_black]' : 'border-gray-200 hover:border-black hover:shadow-md'}`}
                                     >
                                         <div className="flex items-center justify-between mb-3">
                                             <span className="font-bold text-lg text-black">⭕ Not a Member</span>
-                                            {isMember === false && <FaCheckCircle className="text-black text-xl" />}
+                                            {isMember === false && isStudentVerified && <FaCheckCircle className="text-black text-xl" />}
                                         </div>
-                                        <p className="text-sm text-gray-600 font-medium leading-relaxed">Non-members can still access selected resources and register for public events.</p>
+                                        <p className="text-sm text-gray-600 font-medium leading-relaxed">Non-members can still access selected resources and register for public events. Your studentship will be verified.</p>
                                     </div>
                                 </div>
 
@@ -486,9 +557,18 @@ export default function RegisterPage() {
                                     <motion.div
                                         initial={{ opacity: 0, height: 0 }}
                                         animate={{ opacity: 1, height: "auto" }}
-                                        className="mt-6 p-4 bg-[#EAB308]/10 border-l-4 border-[#EAB308] rounded-r-lg text-sm font-bold text-gray-800"
+                                        className="mt-6 p-4 bg-[#22C55E]/10 border-l-4 border-[#22C55E] rounded-r-lg text-sm font-bold text-gray-800"
                                     >
-                                        NOTE: Your membership status will be verified using your matric number against department records after this step.
+                                        ✓ Your membership has been verified. You can proceed to the next step.
+                                    </motion.div>
+                                )}
+                                {isMember === false && isStudentVerified && (
+                                    <motion.div
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: "auto" }}
+                                        className="mt-6 p-4 bg-[#22C55E]/10 border-l-4 border-[#22C55E] rounded-r-lg text-sm font-bold text-gray-800"
+                                    >
+                                        ✓ Your studentship has been verified. You can proceed to the next step.
                                     </motion.div>
                                 )}
                             </motion.div>
@@ -513,12 +593,18 @@ export default function RegisterPage() {
                                         value={userData.password}
                                         onChange={(e) => setUserData({ ...userData, password: e.target.value })}
                                     />
+                                    {userData.confirmPassword !== userData.password && (<div className="flex items-center gap-2 text-red-500">
+                                        <FaExclamationTriangle className="text-red-500 text-xl" />
+                                        <span className="text-sm text-red-500 font-medium leading-relaxed">
+                                            Your confirmation password does not match your password.
+                                        </span>
+                                    </div>)}
                                     <AuthInput
                                         label="Confirm Password"
                                         type="password"
                                         placeholder="••••••••"
                                         value={userData.confirmPassword}
-                                        onChange={(e) => setUserData({ ...userData, confirmPassword: e.target.value })}
+                                        onChange={(e) =>  setUserData({ ...userData, confirmPassword: e.target.value })}
                                     />
                                 </div>
                             </motion.div>
@@ -538,11 +624,12 @@ export default function RegisterPage() {
                                     <h4 className="font-bold text-black mb-2">Account Summary</h4>
                                     <ul className="text-sm text-gray-600 space-y-1">
                                         <li>• Role: {userData?.role}</li>
-                                        <li>• Membership: {isMember === true ? "Claimed" : "Unclaimed"}</li>
+                                        <li>• Membership: {isMember === true ? "Verified Member" : isMember === false && isStudentVerified ? "Verified Student (Non-Member)" : "Not Verified"}</li>
                                         <li>• Full Name: {userData?.fullName}</li>
                                         <li>• Email: {userData?.email}</li>
                                         <li>• Matric Number: {userData?.matricNumber}</li>
                                         <li>• Membership Status: {userData?.membershipStatus}</li>
+                                        <li>• Terms: {userData?.terms ? "Accepted" : "Not Accepted"}</li>
                                     </ul>
                                 </div>
 
@@ -576,7 +663,8 @@ export default function RegisterPage() {
                                 disabled={
                                     // Email verification step is commented out
                                     // (step === 2 && !isEmailVerified) || // Email verification step - COMMENTED OUT
-                                    (step === 1 && (!userData.fullName || !userData.email || !userData.matricNumber)) // Personal info step
+                                    (step === 1 && (!userData.fullName || !userData.email || !userData.matricNumber)) || // Personal info step
+                                    (step === 2 && !(isMember === true || (isMember === false && isStudentVerified === true))) // Membership/Studentship verification step
                                 }
                             >
                                 <span className="flex items-center justify-center gap-2">Next Step <FaArrowRight /></span>

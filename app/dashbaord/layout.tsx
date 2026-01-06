@@ -13,10 +13,9 @@ import {
   FaTimes // Import Close Icon
 } from "react-icons/fa";
 import { getNavItemsByRole, UserRole } from "@/app/config/dashboard-nav";
+import { signOut, useSession } from "next-auth/react";
 
 // MOCK ROLE
-const CURRENT_USER_ROLE: UserRole = "super_admin";
-
 const SidebarContent = ({
   isCollapsed,
   toggleCollapse,
@@ -29,10 +28,10 @@ const SidebarContent = ({
   closeMobile?: () => void;
 }) => {
   const pathname = usePathname();
-  const navItems = getNavItemsByRole(CURRENT_USER_ROLE);
-
-  return (
-    <div className="flex flex-col h-full bg-black border-r-4 border-black text-white">
+  const { data: session } = useSession();
+  const navItems = getNavItemsByRole((session as any)?.user?.role);
+  return (  
+    <div className="flex flex-col h-full bg-black border-r-4 border-black text-white custom-scrollbar">
       
       {/* 1. BRAND HEADER */}
       <div className={`h-20 flex items-center ${isCollapsed ? "justify-center" : "justify-between px-6"} border-b border-gray-800 transition-all shrink-0`}>
@@ -50,7 +49,7 @@ const SidebarContent = ({
                 NAEEES<span className="text-[#22C55E]">.</span>
               </span>
               <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mt-0.5">
-                {CURRENT_USER_ROLE.replace('_', ' ')}
+                {(session as any)?.user?.role?.replace('_', ' ')}
               </span>
             </motion.div>
           )}
@@ -75,7 +74,7 @@ const SidebarContent = ({
       </div>
 
       {/* 2. NAVIGATION LINKS */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden py-6 space-y-2 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden py-6 space-y-2">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -119,6 +118,7 @@ const SidebarContent = ({
         <button
           className={`flex items-center gap-3 w-full px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded-xl transition-colors font-bold text-sm border border-transparent hover:border-red-900 ${isCollapsed ? "justify-center" : ""}`}
           title="Log Out"
+          onClick={() => signOut({ callbackUrl: "/login" })}
         >
           <FaSignOutAlt className="text-lg shrink-0" />
           {!isCollapsed && <span className="whitespace-nowrap">Log Out</span>}
@@ -132,6 +132,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  const { data: session } = useSession();
 
 
   // Dynamic Title and Subtitle Mapping
@@ -186,8 +187,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <motion.aside
         className="hidden lg:flex flex-col fixed left-0 top-0 h-screen z-30"
         initial={false}
-        animate={{ width: isCollapsed ? "5rem" : "18rem" }}
+        animate={{ width: isCollapsed ? "5rem" : "18rem", height: "100vh" }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
+        style={{ height: "100vh" }}
       >
         <SidebarContent
           isCollapsed={isCollapsed}
@@ -208,7 +210,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <motion.div
               initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }}
               transition={{ duration: 0.3 }}
-              className="fixed inset-y-0 left-0 z-50 w-72 lg:hidden"
+              className="fixed inset-y-0 left-0 z-50 w-72 lg:hidden h-screen"
+              style={{ height: "100vh" }}
             >
               <SidebarContent
                 isCollapsed={false}
@@ -249,10 +252,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <FaBars className="text-xl" />
               </button>
               <div className="flex-1">
-                <h1 className="font-heading font-black text-4xl lg:text-5xl text-black mb-2">
+                <h1 className="font-heading font-black text-3xl sm:text-4xl lg:text-5xl text-black mb-2 leading-tight">
                   {pageInfo.title}
                 </h1>
-                <p className="text-xl text-gray-600 font-medium">
+                <p className="text-base sm:text-lg lg:text-xl text-gray-600 font-medium">
                   {pageInfo.subtitle}
                 </p>
               </div>
@@ -260,7 +263,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
             <div className="flex items-center gap-4 shrink-0">
               <div className="text-right hidden sm:block">
-                <p className="font-bold text-sm text-black">John Adewale</p>
+                <p className="font-bold text-sm text-black">
+                  {(session as any)?.user?.fullName || "User"}
+                </p>
                 <p className="text-xs text-gray-500 font-bold bg-gray-100 px-2 py-0.5 rounded-full inline-block mt-0.5">300L • EEE</p>
               </div>
               <div className="w-10 h-10 bg-black border-2 border-black rounded-full overflow-hidden cursor-pointer hover:scale-105 transition-transform">
@@ -271,8 +276,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </header>
 
         {/* Scrollable Main Content */}
-        {/* Padding-top to prevent overlap with fixed header */}
-        <main className="h-screen overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8 bg-[#F8F9FA] pt-32">
+        {/* Padding-top to prevent overlap with fixed header - adjusted for actual header height */}
+        <main className="h-screen overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8 bg-[#F8F9FA] pt-[140px] sm:pt-[150px] lg:pt-[160px]">
           <div className="max-w-[1600px] mx-auto pb-20">
             {children}
           </div>

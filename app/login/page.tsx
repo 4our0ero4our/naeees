@@ -7,18 +7,14 @@ import AuthLayout from "@/app/components/auth/AuthLayout";
 import { AuthInput, AuthButton } from "@/app/components/auth/AuthComponents";
 import { FaEye, FaLock, FaEnvelope } from "react-icons/fa";
 import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { data: session, status } = useSession();
-
-    // Redirect authenticated users to dashboard
-    useEffect(() => {
-        if (status === "authenticated" && session) {
-            router.push("/dashbaord");
-        }
-    }, [status, session, router]);
+    
+    // All hooks must be declared before any conditional returns
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -29,6 +25,40 @@ export default function LoginPage() {
         title: string;
         message: string;
     } | null>(null);
+    
+    // Get callbackUrl from query params if it exists
+    const callbackUrl = searchParams.get("callbackUrl") || "/dashbaord";
+
+    // Redirect authenticated users to dashboard or callbackUrl
+    useEffect(() => {
+        if (status === "authenticated" && session) {
+            // Use replace instead of push to prevent back button from going back to login
+            router.replace(callbackUrl);
+        }
+    }, [status, session, router, callbackUrl]);
+
+    // Show loading state while checking session
+    if (status === "loading") {
+        return (
+            <AuthLayout
+                title="Welcome Back"
+                subtitle="Sign in to continue your academic journey on the NAEEES Digital Portal."
+                contextText="Access your personalized academic dashboard, learning resources, events, and discussions — all in one secure place."
+            >
+                <div className="flex items-center justify-center py-12">
+                    <div className="text-center">
+                        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#22C55E] mb-4"></div>
+                        <p className="text-gray-600 font-medium">Checking session...</p>
+                    </div>
+                </div>
+            </AuthLayout>
+        );
+    }
+
+    // Don't render login form if already authenticated (redirect will happen)
+    if (status === "authenticated") {
+        return null;
+    }
 
     const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -61,8 +91,8 @@ export default function LoginPage() {
                     title: "Login Successful",
                     message: "You have been logged in successfully",
                 });
-                // Redirect to dashboard after successful login
-                router.push("/dashbaord");
+                // Redirect to callbackUrl or dashboard after successful login
+                router.replace(callbackUrl);
                 router.refresh();
             }
         } catch (error: any) {

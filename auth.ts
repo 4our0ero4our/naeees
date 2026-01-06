@@ -35,25 +35,31 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     email: user.email,
                     role: user.role,
                     membershipStatus: user.membershipStatus,
+                    fullName: user.fullName,
                 };
             },
         }),
     ],
     session: {
         strategy: 'jwt',
+        maxAge: 30 * 60 * 1000, // 30 minutes
     },
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
+                token.id = user.id;
                 token.role = (user as any).role;
                 token.membershipStatus = (user as any).membershipStatus;
+                token.fullName = (user as any).fullName;
             }
             return token;
         },
         async session({ session, token }) {
             if (session.user) {
+                (session.user as any).id = token.id as string;
                 (session.user as any).role = token.role;
                 (session.user as any).membershipStatus = token.membershipStatus;
+                (session.user as any).fullName = token.fullName as string;
             }
             return session;
         },

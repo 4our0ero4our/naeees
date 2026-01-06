@@ -10,6 +10,11 @@ const MaterialSchema = new Schema(
     type: String,
     description: String,
     fileUrl: String,
+    
+    // Cloudinary metadata
+    cloudinaryPublicId: String,
+    cloudinaryFormat: String,
+    fileSize: Number,
 
     visibility: {
       type: String,

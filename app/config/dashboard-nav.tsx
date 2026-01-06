@@ -68,6 +68,7 @@ import {
     },
   ];
   
-  export const getNavItemsByRole = (role: UserRole) => {
-    return DASHBOARD_NAV.filter(item => item.roles.includes(role));
+  export const getNavItemsByRole = (role?: UserRole | string | null) => {
+    if (!role) return [];
+    return DASHBOARD_NAV.filter(item => item.roles.includes(role as UserRole));
   };

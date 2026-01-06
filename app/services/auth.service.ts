@@ -5,6 +5,7 @@ import { validateRegisterInput } from "../lib/validators/auth";
 import { isValidFutminnaEmail } from "../lib/validators/auth";
 import { MEMBERSHIP_STATUS } from "../lib/constants/auth";
 import { Member } from "../models/Member.model";
+import { Student } from "../models/Student.model";
 
 /**
 Create a new user
@@ -131,6 +132,42 @@ export async function verifyMembership(email: string, matricNumber: string) {
   // Member exists and is active
   return { isMember: true };
 }
+
+/**
+Verify the studentship status of the user
+@param email - The email of the user
+@param matricNumber - The matric number of the user
+@returns the studentship status object with isStudent boolean
+@throws {Error} if the email is not a valid email
+@throws {Error} if the matric number is invalid
+*/
+export async function verifyStudentship(email: string, matricNumber: string) {
+  await connectDB();
+  
+  // Validate inputs
+  if (!email || !matricNumber) {
+    throw new Error("Email and matric number are required to verify studentship");
+  }
+  
+  if (!isValidFutminnaEmail(email)) {
+    throw new Error("Invalid student email");
+  }
+  
+  // Find student in database by email and matric number
+  const student = await Student.findOne({ 
+    email: email.trim().toLowerCase(), 
+    matricNumber: matricNumber.trim() 
+  });
+  
+  // If no student found, they're not a student
+  if (!student) {
+    return { isStudent: false };
+  }
+  
+  // Student exists and is active
+  return { isStudent: true };
+}
+
 // export async function verifyMembership(email: string, matricNumber: string) {
 //   // await connectDB();
 //   // const member = await Member.findOne({ email, matricNumber });
