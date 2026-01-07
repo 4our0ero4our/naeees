@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FaBook, FaChartLine, FaCloudUploadAlt, FaUsers, FaArrowRight, FaClock } from "react-icons/fa";
+import { FaBook, FaChartLine, FaCloudUploadAlt, FaUsers, FaArrowRight, FaClock, FaCalendarAlt, FaComments, FaSearch } from "react-icons/fa";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -224,18 +224,61 @@ export default function DashboardOverview() {
         <div className="flex flex-col">
           <h3 className="font-heading font-black text-2xl text-black mb-6">Quick Actions</h3>
           <div className="flex flex-col gap-4">
-            <Link href="/dashbaord/materials/upload">
-              <button className="w-full group text-left bg-black text-white p-6 rounded-2xl border-2 border-black font-bold flex justify-between items-center shadow-[6px_6px_0px_0px_#22C55E] hover:translate-y-1 hover:shadow-none transition-all cursor-pointer">
-                <span className="text-lg">Upload New Material</span>
-                <span className="w-8 h-8 bg-[#22C55E] rounded-full flex items-center justify-center text-black group-hover:rotate-45 transition-transform"><FaArrowRight /></span>
-              </button>
-            </Link>
-            <Link href="/dashbaord/admin/users">
-              <button className="w-full group text-left bg-white text-black p-6 rounded-2xl border-2 border-black font-bold flex justify-between items-center shadow-[6px_6px_0px_0px_black] hover:translate-y-1 hover:shadow-none transition-all cursor-pointer">
-                <span className="text-lg">Manage Users</span>
-                <span className="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform"><FaArrowRight /></span>
-              </button>
-            </Link>
+            {/* Student-specific actions */}
+            {((session as any)?.user?.role === "student") && (
+              <>
+                <Link href="/dashbaord/materials">
+                  <button className="w-full group text-left bg-black text-white p-6 rounded-2xl border-2 border-black font-bold flex justify-between items-center shadow-[6px_6px_0px_0px_#22C55E] hover:translate-y-1 hover:shadow-none transition-all cursor-pointer">
+                    <span className="text-lg">Browse Materials</span>
+                    <span className="w-8 h-8 bg-[#22C55E] rounded-full flex items-center justify-center text-black group-hover:rotate-45 transition-transform"><FaBook /></span>
+                  </button>
+                </Link>
+                <Link href="/dashbaord/cgpa">
+                  <button className="w-full group text-left bg-white text-black p-6 rounded-2xl border-2 border-black font-bold flex justify-between items-center shadow-[6px_6px_0px_0px_black] hover:translate-y-1 hover:shadow-none transition-all cursor-pointer">
+                    <span className="text-lg">Track CGPA</span>
+                    <span className="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform"><FaChartLine /></span>
+                  </button>
+                </Link>
+                <Link href="/dashbaord/events">
+                  <button className="w-full group text-left bg-white text-black p-6 rounded-2xl border-2 border-black font-bold flex justify-between items-center shadow-[6px_6px_0px_0px_black] hover:translate-y-1 hover:shadow-none transition-all cursor-pointer">
+                    <span className="text-lg">View Events</span>
+                    <span className="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform"><FaCalendarAlt /></span>
+                  </button>
+                </Link>
+                <Link href="/dashbaord/forum">
+                  <button className="w-full group text-left bg-white text-black p-6 rounded-2xl border-2 border-black font-bold flex justify-between items-center shadow-[6px_6px_0px_0px_black] hover:translate-y-1 hover:shadow-none transition-all cursor-pointer">
+                    <span className="text-lg">Join Forum</span>
+                    <span className="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform"><FaComments /></span>
+                  </button>
+                </Link>
+              </>
+            )}
+
+            {/* Admin and Super Admin actions */}
+            {((session as any)?.user?.role === "admin" || (session as any)?.user?.role === "super_admin") && (
+              <>
+                <Link href="/dashbaord/materials/upload">
+                  <button className="w-full group text-left bg-black text-white p-6 rounded-2xl border-2 border-black font-bold flex justify-between items-center shadow-[6px_6px_0px_0px_#22C55E] hover:translate-y-1 hover:shadow-none transition-all cursor-pointer">
+                    <span className="text-lg">Upload New Material</span>
+                    <span className="w-8 h-8 bg-[#22C55E] rounded-full flex items-center justify-center text-black group-hover:rotate-45 transition-transform"><FaCloudUploadAlt /></span>
+                  </button>
+                </Link>
+                <Link href="/dashbaord/materials">
+                  <button className="w-full group text-left bg-white text-black p-6 rounded-2xl border-2 border-black font-bold flex justify-between items-center shadow-[6px_6px_0px_0px_black] hover:translate-y-1 hover:shadow-none transition-all cursor-pointer">
+                    <span className="text-lg">Manage Materials</span>
+                    <span className="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform"><FaBook /></span>
+                  </button>
+                </Link>
+                {(session as any)?.user?.role === "super_admin" && (
+                  <Link href="/dashbaord/admin/users">
+                    <button className="w-full group text-left bg-white text-black p-6 rounded-2xl border-2 border-black font-bold flex justify-between items-center shadow-[6px_6px_0px_0px_black] hover:translate-y-1 hover:shadow-none transition-all cursor-pointer">
+                      <span className="text-lg">Manage Users</span>
+                      <span className="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform"><FaUsers /></span>
+                    </button>
+                  </Link>
+                )}
+              </>
+            )}
           </div>
         </div>
 

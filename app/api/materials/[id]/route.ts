@@ -9,7 +9,7 @@ import { deleteFromCloudinary } from "@/app/lib/cloudinary";
  */
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
     const session = await auth();
@@ -24,7 +24,9 @@ export async function DELETE(
 
     await connectDB();
 
-    const material = await Material.findById(params.id);
+    // Await params if it's a Promise (Next.js 15+)
+    const resolvedParams = params instanceof Promise ? await params : params;
+    const material = await Material.findById(resolvedParams.id);
     if (!material) {
       return NextResponse.json(
         { success: false, message: "Material not found" },
@@ -45,7 +47,7 @@ export async function DELETE(
       );
     }
 
-    await Material.findByIdAndDelete(params.id);
+    await Material.findByIdAndDelete(resolvedParams.id);
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error: any) {

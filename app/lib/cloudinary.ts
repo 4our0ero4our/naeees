@@ -22,7 +22,7 @@ export async function uploadToCloudinary(
   resourceType: 'image' | 'video' | 'raw' | 'auto' = 'auto'
 ): Promise<{ secure_url: string; public_id: string; format: string; bytes: number }> {
   return new Promise((resolve, reject) => {
-    const uploadOptions = {
+    const uploadOptions: any = {
       folder,
       resource_type: resourceType,
       use_filename: true,
@@ -31,6 +31,18 @@ export async function uploadToCloudinary(
       // Ensure files are publicly accessible
       access_mode: 'public' as const,
     };
+
+    // For raw files (PDFs, documents), ensure no processing or transformations
+    if (resourceType === 'raw') {
+      // Don't apply any transformations or processing
+      uploadOptions.format = undefined;
+      uploadOptions.eager = undefined;
+      uploadOptions.transformation = undefined;
+      // Ensure the file is stored as-is without any conversion
+      uploadOptions.invalidate = false;
+      // Don't generate any derived resources
+      uploadOptions.eager_async = false;
+    }
 
     cloudinary.uploader.upload_stream(
       uploadOptions,
