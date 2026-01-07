@@ -52,7 +52,7 @@ const Sidebar = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
                 </div>
 
                 {/* Nav Links */}
-                <div className="flex-1 overflow-y-auto py-8 px-4 space-y-2">
+                <div className="flex-1 overflow-y-auto py-8 px-4 space-y-2 sidebar-scrollbar">
                     {navItems.map((item, index) => {
                         const isActive = pathname === item.href;
                         return (
@@ -64,8 +64,8 @@ const Sidebar = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
                                     whileHover={{ x: 8, scale: 1.02 }}
                                     whileTap={{ scale: 0.95 }}
                                     className={`relative flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 border-2 overflow-hidden group ${isActive
-                                            ? "bg-[#EAB308] text-black border-black shadow-[4px_4px_0px_0px_white]"
-                                            : "bg-transparent text-gray-400 border-transparent hover:text-white"
+                                        ? "bg-[#EAB308] text-black border-black shadow-[4px_4px_0px_0px_white]"
+                                        : "bg-transparent text-gray-400 border-transparent hover:text-white"
                                         }`}
                                 >
                                     {/* Subtle hover background for non-active items */}

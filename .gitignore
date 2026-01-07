@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Documentation
+API_DOCUMENTATION.md
+
+# Email Verification Setup
+EMAIL_VERIFICATION_SETUP.md
+
+# TODO
+TODO

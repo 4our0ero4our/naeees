@@ -1,7 +1,11 @@
 //  The BRAIN: Configuration & Logic
-import NextAuth from 'next-auth';
+import NextAuth, { CredentialsSignin } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { verifyCredentials } from '@/app/services/auth.service';
+
+class SuspendedError extends CredentialsSignin {
+    code = "account_suspended"
+}
 
 // This defines how authentication works
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -28,6 +32,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
                 // If the user is not found, return null
                 if (!user) return null;
+
+                // Check for suspension
+                if (user.isActive === false) {
+                    throw new SuspendedError();
+                }
 
                 // If the user is found, return the user
                 return {
