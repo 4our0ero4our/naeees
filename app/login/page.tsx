@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, FormEvent, useEffect } from "react";
+import React, { useState, FormEvent, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import AuthLayout from "@/app/components/auth/AuthLayout";
@@ -9,7 +9,8 @@ import { FaEye, FaLock, FaEnvelope } from "react-icons/fa";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function LoginPage() {
+// Component that uses useSearchParams - must be wrapped in Suspense
+function LoginForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { data: session, status } = useSession();
@@ -203,5 +204,27 @@ export default function LoginPage() {
 
       </form>
     </AuthLayout>
+  );
+}
+
+// Main page component with Suspense boundary
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <AuthLayout
+        title="Welcome Back"
+        subtitle="Sign in to continue your academic journey on the NAEEES Digital Portal."
+        contextText="Access your personalized academic dashboard, learning resources, events, and discussions — all in one secure place."
+      >
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#22C55E] mb-4"></div>
+            <p className="text-gray-600 font-medium">Loading...</p>
+          </div>
+        </div>
+      </AuthLayout>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }

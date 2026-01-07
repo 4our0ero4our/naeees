@@ -7,6 +7,7 @@ import { FaPlus, FaFilePdf } from "react-icons/fa";
 import CGPASummary from "@/app/components/cgpa/CGPASummary";
 import SemesterCard from "@/app/components/cgpa/SemesterCard";
 import ManageSemesterModal from "@/app/components/cgpa/ManageSemesterModal";
+import TargetCalculatorModal from "@/app/components/cgpa/TargetCalculatorModal";
 import CustomAlert from "@/app/components/CustomAlert";
 import { generateCGPAPdf } from "@/app/lib/utils/cgpa-export";
 import { useSession } from "next-auth/react";
@@ -16,6 +17,7 @@ export default function CGPAPage() {
     const [loading, setLoading] = useState(true);
     const [records, setRecords] = useState<any[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
     const [editingRecord, setEditingRecord] = useState<any>(null);
     const [alert, setAlert] = useState<{
         isOpen: boolean;
@@ -120,6 +122,12 @@ export default function CGPAPage() {
                 </div>
                 <div className="flex gap-3">
                     <button
+                        onClick={() => setIsCalculatorOpen(true)}
+                        className="bg-white text-black border-2 border-black px-4 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-gray-50 transition-colors shadow-[4px_4px_0px_0px_gray]"
+                    >
+                        Target 🎯
+                    </button>
+                    <button
                         onClick={handleExport}
                         className="bg-white text-black border-2 border-black px-4 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-gray-50 transition-colors shadow-[4px_4px_0px_0px_gray]"
                     >
@@ -180,6 +188,13 @@ export default function CGPAPage() {
                 onClose={() => setIsModalOpen(false)}
                 onSave={handleSave}
                 initialData={editingRecord}
+            />
+
+            <TargetCalculatorModal
+                isOpen={isCalculatorOpen}
+                onClose={() => setIsCalculatorOpen(false)}
+                currentCGPA={parseFloat(cgpa)}
+                totalUnits={totalUnits}
             />
 
             {/* Alert */}
