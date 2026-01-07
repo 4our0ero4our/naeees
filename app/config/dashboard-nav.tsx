@@ -46,12 +46,12 @@ import {
       icon: <FaCloudUploadAlt />, 
       roles: ["admin", "super_admin"] 
     },
-    { 
-      title: "Manage Files", 
-      href: "/dashbaord/materials/manage", 
-      icon: <FaFolderOpen />, 
-      roles: ["admin", "super_admin"] 
-    },
+    // { 
+    //   title: "Manage Files", 
+    //   href: "/dashbaord/materials/manage", 
+    //   icon: <FaFolderOpen />, 
+    //   roles: ["admin", "super_admin"] 
+    // },
   
     // --- SUPER ADMIN ONLY ---
     { 

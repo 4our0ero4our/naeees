@@ -36,6 +36,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     role: user.role,
                     membershipStatus: user.membershipStatus,
                     fullName: user.fullName,
+                    matricNumber: user.matricNumber,
                 };
             },
         }),
@@ -51,6 +52,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 token.role = (user as any).role;
                 token.membershipStatus = (user as any).membershipStatus;
                 token.fullName = (user as any).fullName;
+                token.matricNumber = (user as any).matricNumber;
             }
             return token;
         },
@@ -60,6 +62,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 (session.user as any).role = token.role;
                 (session.user as any).membershipStatus = token.membershipStatus;
                 (session.user as any).fullName = token.fullName as string;
+                (session.user as any).matricNumber = token.matricNumber as string;
             }
             return session;
         },
