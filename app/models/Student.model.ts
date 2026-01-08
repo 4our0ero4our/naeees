@@ -22,6 +22,10 @@ const StudentSchema = new Schema({
         type: String,
         required: true,
     },
+    member: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 

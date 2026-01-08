@@ -8,7 +8,7 @@ import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     FaUsers, FaUserShield, FaUserGraduate, FaSearch, FaUserPlus,
-    FaEllipsisV, FaCheckCircle, FaBan, FaArrowLeft, FaArrowRight
+    FaEllipsisV, FaCheckCircle, FaBan, FaArrowLeft, FaArrowRight, FaFileUpload
 } from "react-icons/fa";
 import CustomAlert from "@/app/components/CustomAlert";
 
@@ -30,6 +30,33 @@ export default function UserManagementPage() {
     // Modals
     const [promotionModalOpen, setPromotionModalOpen] = useState(false);
     const [promoteEmail, setPromoteEmail] = useState("");
+    
+    // File Upload
+    const fileInputRef = React.useRef<HTMLInputElement>(null);
+    const [uploading, setUploading] = useState(false);
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        setUploading(true);
+        try {
+            const res = await axios.post("/api/superadmin/students/upload", formData, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
+            if (res.data.success) {
+                setAlert({ isOpen: true, type: "success", title: "Upload Successful", message: res.data.message });
+            }
+        } catch (error: any) {
+            setAlert({ isOpen: true, type: "error", title: "Upload Failed", message: error.response?.data?.message || "Failed to upload file." });
+        } finally {
+            setUploading(false);
+            if (fileInputRef.current) fileInputRef.current.value = ""; // Reset input
+        }
+    };
 
     // Confirmation for Demote
     const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean; type: "demote" | "promote" | "status"; data: any } | null>(null);
@@ -123,12 +150,28 @@ export default function UserManagementPage() {
                     <h1 className="text-3xl font-black font-heading text-black tracking-tight">User Management</h1>
                     <p className="text-gray-500 font-bold mt-1">Manage platform users, assign roles, and control access.</p>
                 </div>
-                <button
-                    onClick={() => setPromotionModalOpen(true)}
-                    className="bg-black text-white px-6 py-3 rounded-xl font-bold border-2 border-black shadow-[4px_4px_0px_0px_#22C55E] hover:shadow-[6px_6px_0px_0px_#22C55E] active:translate-y-1 active:shadow-none transition-all flex items-center gap-2"
-                >
-                    <FaUserPlus /> Add Admin
-                </button>
+                <div className="flex gap-3">
+                     <input 
+                        type="file" 
+                        ref={fileInputRef} 
+                        onChange={handleFileUpload} 
+                        accept=".xlsx, .xls" 
+                        className="hidden" 
+                    />
+                    <button
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploading}
+                        className="bg-white text-black px-6 py-3 rounded-xl font-bold border-2 border-black hover:bg-gray-50 active:translate-y-1 transition-all flex items-center gap-2"
+                    >
+                         {uploading ? "Uploading..." : <><FaFileUpload /> Add Students</>}
+                    </button>
+                    <button
+                        onClick={() => setPromotionModalOpen(true)}
+                        className="bg-black text-white px-6 py-3 rounded-xl font-bold border-2 border-black shadow-[4px_4px_0px_0px_#22C55E] hover:shadow-[6px_6px_0px_0px_#22C55E] active:translate-y-1 active:shadow-none transition-all flex items-center gap-2"
+                    >
+                        <FaUserPlus /> Add Admin
+                    </button>
+                </div>
             </div>
 
             {/* --- STATS CARDS --- */}
