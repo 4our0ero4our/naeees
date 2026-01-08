@@ -30,9 +30,67 @@ const SidebarContent = ({
   const pathname = usePathname();
   const { data: session } = useSession();
   const navItems = getNavItemsByRole((session as any)?.user?.role);
-  return (  
+
+  // Notification State
+  const [notifications, setNotifications] = useState({
+    events: false,
+    materials: false,
+    forum: false,
+    announcements: false
+  });
+
+  // Check for updates on mount
+  useEffect(() => {
+    const checkUpdates = async () => {
+      try {
+        const res = await fetch("/api/updates/status");
+        if (res.ok) {
+          const { timestamps } = await res.json();
+          // Check against local storage (last seen)
+          const lastEvents = localStorage.getItem("last_seen_events");
+          const lastMaterials = localStorage.getItem("last_seen_materials");
+          const lastForum = localStorage.getItem("last_seen_forum");
+          const lastAnnouncements = localStorage.getItem("last_seen_announcements");
+
+          setNotifications({
+            events: !!timestamps.events && (!lastEvents || new Date(timestamps.events) > new Date(lastEvents)),
+            materials: !!timestamps.materials && (!lastMaterials || new Date(timestamps.materials) > new Date(lastMaterials)),
+            forum: !!timestamps.forum && (!lastForum || new Date(timestamps.forum) > new Date(lastForum)),
+            announcements: !!timestamps.announcements && (!lastAnnouncements || new Date(timestamps.announcements) > new Date(lastAnnouncements))
+          });
+        }
+      } catch (err) {
+        console.error("Failed to check notifications", err);
+      }
+    };
+    checkUpdates();
+    // Poll every 60 seconds
+    const interval = setInterval(checkUpdates, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Handle click to clear notification
+  const handleNavClick = (href: string) => {
+    const now = new Date().toISOString();
+    if (href === "/dashbaord/events") {
+      localStorage.setItem("last_seen_events", now);
+      setNotifications(prev => ({ ...prev, events: false }));
+    } else if (href === "/dashbaord/materials") {
+      localStorage.setItem("last_seen_materials", now);
+      setNotifications(prev => ({ ...prev, materials: false }));
+    } else if (href === "/dashbaord/forum") {
+      localStorage.setItem("last_seen_forum", now);
+      setNotifications(prev => ({ ...prev, forum: false }));
+    } else if (href === "/dashbaord/announcements") {
+      localStorage.setItem("last_seen_announcements", now);
+      setNotifications(prev => ({ ...prev, announcements: false }));
+    }
+    if (closeMobile) closeMobile();
+  };
+
+  return (
     <div className="flex flex-col h-full bg-black border-r-4 border-black text-white custom-scrollbar">
-      
+
       {/* 1. BRAND HEADER */}
       <div className={`h-20 flex items-center ${isCollapsed ? "justify-center" : "justify-between px-6"} border-b border-gray-800 transition-all shrink-0`}>
         <div className="flex items-center gap-3">
@@ -64,12 +122,12 @@ const SidebarContent = ({
 
         {/* --- MOBILE CLOSE BUTTON --- */}
         {isMobile && closeMobile && (
-            <button 
-                onClick={closeMobile} 
-                className="p-2 text-white hover:text-red-500 transition-colors border-2 border-transparent hover:border-red-500 rounded-lg"
-            >
-                <FaTimes className="text-xl" />
-            </button>
+          <button
+            onClick={closeMobile}
+            className="p-2 text-white hover:text-red-500 transition-colors border-2 border-transparent hover:border-red-500 rounded-lg"
+          >
+            <FaTimes className="text-xl" />
+          </button>
         )}
       </div>
 
@@ -77,29 +135,46 @@ const SidebarContent = ({
       <div className="flex-1 overflow-y-auto overflow-x-hidden py-6 space-y-2">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
+
+          let showBadge = false;
+          if (item.href === "/dashbaord/events" && notifications.events) showBadge = true;
+          if (item.href === "/dashbaord/materials" && notifications.materials) showBadge = true;
+          if (item.href === "/dashbaord/forum" && notifications.forum) showBadge = true;
+          if (item.href === "/dashbaord/announcements" && notifications.announcements) showBadge = true;
+
           return (
             <Link
               key={item.href}
               href={item.href}
-              onClick={closeMobile}
+              onClick={() => handleNavClick(item.href)}
               title={isCollapsed ? item.title : ""}
               className="block px-3"
             >
               <div
-                className={`flex items-center gap-4 px-3 py-3 rounded-xl transition-all duration-200 border-2 whitespace-nowrap overflow-hidden ${isActive
+                className={`flex items-center gap-4 px-3 py-3 rounded-xl transition-all duration-200 border-2 whitespace-nowrap overflow-hidden relative ${isActive
                   ? "bg-[#EAB308] text-black border-black shadow-[4px_4px_0px_0px_white]"
                   : "bg-transparent text-gray-400 border-transparent hover:text-white hover:bg-white/10"
                   } ${isCollapsed ? "justify-center" : ""}`}
               >
-                <span className="text-xl shrink-0">{item.icon}</span>
+                <div className="relative shrink-0">
+                  <span className="text-xl">{item.icon}</span>
+                  {showBadge && isCollapsed && (
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-black"></span>
+                  )}
+                </div>
 
                 {!isCollapsed && (
-                  <motion.span
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                    className="font-bold text-sm uppercase tracking-wide"
-                  >
-                    {item.title}
-                  </motion.span>
+                  <div className="flex items-center justify-between w-full">
+                    <motion.span
+                      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                      className="font-bold text-sm uppercase tracking-wide"
+                    >
+                      {item.title}
+                    </motion.span>
+                    {showBadge && (
+                      <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase ml-2 animate-pulse">NEW</span>
+                    )}
+                  </div>
                 )}
               </div>
             </Link>
@@ -159,6 +234,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       return {
         title: "Upload Material",
         subtitle: "Add new academic materials to the library."
+      };
+    }
+    if (path.includes("/events")) {
+      return {
+        title: "Events & Activities",
+        subtitle: "Register for upcoming events and download your tickets."
       };
     }
     // Default

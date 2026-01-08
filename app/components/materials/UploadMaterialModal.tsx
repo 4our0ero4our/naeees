@@ -162,7 +162,7 @@ export default function UploadMaterialModal({ isOpen, onClose, onSuccess }: Uplo
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Header */}
-                        <div className="p-6 border-b-2 border-gray-100 flex justify-between items-center bg-gray-50 flex-shrink-0">
+                        <div className="p-6 border-b-2 border-gray-100 flex justify-between items-center bg-gray-50 shrink-0">
                             <div>
                                 <h2 className="font-heading font-black text-xl flex items-center gap-2">
                                     <FaCloudUploadAlt className="text-[#22C55E]" /> Upload Material
@@ -275,11 +275,11 @@ export default function UploadMaterialModal({ isOpen, onClose, onSuccess }: Uplo
                                             onDrop={handleDrop}
                                             onClick={() => fileInputRef.current?.click()}
                                             className={`border-3 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center transition-colors cursor-pointer group ${isDragging
-                                                    ? "border-[#22C55E] bg-green-50"
-                                                    : "border-gray-300 hover:border-[#22C55E] hover:bg-green-50"
+                                                ? "border-[#22C55E] bg-green-50"
+                                                : "border-gray-300 hover:border-[#22C55E] hover:bg-green-50"
                                                 }`}
                                         >
-                                            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-white group-hover:shadow-md transition-all">
+                                            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-white group-hover:shadow-md transition-all shrink-0">
                                                 <FaCloudUploadAlt className="text-2xl text-gray-400 group-hover:text-[#22C55E]" />
                                             </div>
                                             <p className="font-bold text-gray-700 text-sm">Click to upload or drag & drop</p>

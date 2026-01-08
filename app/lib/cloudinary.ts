@@ -22,6 +22,12 @@ export async function uploadToCloudinary(
   resourceType: 'image' | 'video' | 'raw' | 'auto' = 'auto'
 ): Promise<{ secure_url: string; public_id: string; format: string; bytes: number }> {
   return new Promise((resolve, reject) => {
+    // Check if config exists
+    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+      console.error("Cloudinary Env Vars Missing!");
+      return reject(new Error("Cloudinary configuration missing. Please check .env file."));
+    }
+
     const uploadOptions: any = {
       folder,
       resource_type: resourceType,
@@ -44,10 +50,11 @@ export async function uploadToCloudinary(
       uploadOptions.eager_async = false;
     }
 
-    cloudinary.uploader.upload_stream(
+    const stream = cloudinary.uploader.upload_stream(
       uploadOptions,
       (error, result) => {
         if (error) {
+          console.error("Cloudinary Upload Stream Error:", error);
           reject(error);
         } else if (result) {
           resolve({
@@ -60,7 +67,19 @@ export async function uploadToCloudinary(
           reject(new Error('Upload failed: No result returned'));
         }
       }
-    ).end(file);
+    );
+
+    stream.on("error", (err) => {
+      console.error("Stream Connection Error", err);
+      reject(err);
+    });
+
+    try {
+      stream.end(file);
+    } catch (err) {
+      console.error("Stream Write Error", err);
+      reject(err);
+    }
   });
 }
 
