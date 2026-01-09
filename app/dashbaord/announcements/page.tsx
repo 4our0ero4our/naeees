@@ -138,7 +138,7 @@ export default function AnnouncementsPage() {
                         <AnnouncementCard
                             key={item._id}
                             announcement={item}
-                            onClick={() => handleOpenAnnouncement(item)}
+                            onClick={() => router.push(`/dashbaord/announcements/${item._id}`)}
                         />
                     ))}
                 </div>
