@@ -33,32 +33,54 @@ const SidebarContent = ({
 
   // Notification State
   const [notifications, setNotifications] = useState({
-    events: false,
-    materials: false,
-    forum: false,
-    announcements: false
+    events: 0,
+    materials: 0,
+    forum: 0,
+    announcements: 0
   });
 
   // Check for updates on mount
   useEffect(() => {
     const checkUpdates = async () => {
       try {
-        const res = await fetch("/api/updates/status");
-        if (res.ok) {
-          const { timestamps } = await res.json();
-          // Check against local storage (last seen)
-          const lastEvents = localStorage.getItem("last_seen_events");
-          const lastMaterials = localStorage.getItem("last_seen_materials");
-          const lastForum = localStorage.getItem("last_seen_forum");
-          const lastAnnouncements = localStorage.getItem("last_seen_announcements");
+        const lastEvents = localStorage.getItem("last_seen_events");
+        const lastMaterials = localStorage.getItem("last_seen_materials");
+        const lastForum = localStorage.getItem("last_seen_forum");
 
-          setNotifications({
-            events: !!timestamps.events && (!lastEvents || new Date(timestamps.events) > new Date(lastEvents)),
-            materials: !!timestamps.materials && (!lastMaterials || new Date(timestamps.materials) > new Date(lastMaterials)),
-            forum: !!timestamps.forum && (!lastForum || new Date(timestamps.forum) > new Date(lastForum)),
-            announcements: !!timestamps.announcements && (!lastAnnouncements || new Date(timestamps.announcements) > new Date(lastAnnouncements))
-          });
+        // 1. Fetch Counts for Events, Materials, Forum
+        // We pass the last seen dates. If null, the API currently returns 0.
+        // If we want to show a badge for "never visited", we might need to handle specific logic, 
+        // but typically "0" is fine until they set a baseline, or we could pass a very old date if missing.
+        // Let's rely on the API returning counts relative to the saved date.
+
+        let queryParams = new URLSearchParams();
+        if (lastEvents) queryParams.append("events", lastEvents);
+        if (lastMaterials) queryParams.append("materials", lastMaterials);
+        if (lastForum) queryParams.append("forum", lastForum);
+
+        const resCounts = await fetch(`/api/updates/counts?${queryParams.toString()}`);
+        let countsData = { events: 0, materials: 0, forum: 0 };
+
+        if (resCounts.ok) {
+          const { counts } = await resCounts.json();
+          countsData = counts || { events: 0, materials: 0, forum: 0 };
         }
+
+        // 2. Fetch Unread Count for Announcements (New System)
+        const resAnnounce = await fetch("/api/announcements/unread");
+        let announceCount = 0;
+        if (resAnnounce.ok) {
+          const data = await resAnnounce.json();
+          announceCount = data.count || 0;
+        }
+
+        setNotifications({
+          events: countsData.events,
+          materials: countsData.materials,
+          forum: countsData.forum,
+          announcements: announceCount
+        });
+
       } catch (err) {
         console.error("Failed to check notifications", err);
       }
@@ -72,19 +94,23 @@ const SidebarContent = ({
   // Handle click to clear notification
   const handleNavClick = (href: string) => {
     const now = new Date().toISOString();
+
+    // For these timestamp-based sections, "clearing" means updating the last_seen time to NOW.
+    // This will make the count 0 on the next fetch (since nothing is newer than now).
+    // We can also optimistically set the local count to 0.
+
     if (href === "/dashbaord/events") {
       localStorage.setItem("last_seen_events", now);
-      setNotifications(prev => ({ ...prev, events: false }));
+      setNotifications(prev => ({ ...prev, events: 0 }));
     } else if (href === "/dashbaord/materials") {
       localStorage.setItem("last_seen_materials", now);
-      setNotifications(prev => ({ ...prev, materials: false }));
+      setNotifications(prev => ({ ...prev, materials: 0 }));
     } else if (href === "/dashbaord/forum") {
       localStorage.setItem("last_seen_forum", now);
-      setNotifications(prev => ({ ...prev, forum: false }));
-    } else if (href === "/dashbaord/announcements") {
-      localStorage.setItem("last_seen_announcements", now);
-      setNotifications(prev => ({ ...prev, announcements: false }));
+      setNotifications(prev => ({ ...prev, forum: 0 }));
     }
+    // Announcements are handled by their own page logic
+
     if (closeMobile) closeMobile();
   };
 
@@ -136,11 +162,11 @@ const SidebarContent = ({
         {navItems.map((item) => {
           const isActive = pathname === item.href;
 
-          let showBadge = false;
-          if (item.href === "/dashbaord/events" && notifications.events) showBadge = true;
-          if (item.href === "/dashbaord/materials" && notifications.materials) showBadge = true;
-          if (item.href === "/dashbaord/forum" && notifications.forum) showBadge = true;
-          if (item.href === "/dashbaord/announcements" && notifications.announcements) showBadge = true;
+          const badgeCount =
+            (item.href === "/dashbaord/events" ? notifications.events : 0) +
+            (item.href === "/dashbaord/materials" ? notifications.materials : 0) +
+            (item.href === "/dashbaord/forum" ? notifications.forum : 0) +
+            (item.href === "/dashbaord/announcements" ? notifications.announcements : 0);
 
           return (
             <Link
@@ -158,8 +184,10 @@ const SidebarContent = ({
               >
                 <div className="relative shrink-0">
                   <span className="text-xl">{item.icon}</span>
-                  {showBadge && isCollapsed && (
-                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-black"></span>
+                  {isCollapsed && badgeCount > 0 && (
+                    <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full border-2 border-black">
+                      {badgeCount > 99 ? '99+' : badgeCount}
+                    </span>
                   )}
                 </div>
 
@@ -171,8 +199,11 @@ const SidebarContent = ({
                     >
                       {item.title}
                     </motion.span>
-                    {showBadge && (
-                      <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase ml-2 animate-pulse">NEW</span>
+
+                    {badgeCount > 0 && (
+                      <span className="bg-red-500 text-white text-xs font-bold min-w-[20px] h-5 flex items-center justify-center rounded-full ml-auto shadow-sm px-1">
+                        {badgeCount > 99 ? '99+' : badgeCount}
+                      </span>
                     )}
                   </div>
                 )}
@@ -240,6 +271,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       return {
         title: "Events & Activities",
         subtitle: "Register for upcoming events and download your tickets."
+      };
+    }
+    if (path.includes("/announcements")) {
+      return {
+        title: "Announcements",
+        subtitle: "Stay updated with the latest news and highlights."
       };
     }
     // Default
