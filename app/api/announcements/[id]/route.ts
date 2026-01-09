@@ -50,8 +50,44 @@ export async function PATCH(req: Request, props: { params: Promise<{ id: string 
             { new: true }
         );
 
-        return NextResponse.json({ success: true, message: "Updated successfully", data: updatedAnnouncement });
+        // --- NOTIFICATION TRIGGER ---
+        // If status changed to Published (or was already Published and we are just updating content but that might spam, 
+        // usually we only notify on *becoming* Published).
+        if (body.status === "Published" && existingAnnouncement.status !== "Published") {
+            try {
+                const { Notification } = await import("@/app/models/Notification.model");
+                const { User } = await import("@/app/models/User.model");
 
+                const title = updates.title || existingAnnouncement.title;
+                const category = updates.category || existingAnnouncement.category;
+                const visibility = updates.visibility || existingAnnouncement.visibility;
+
+                let recipientQuery = {};
+                if (visibility === "MembersOnly") {
+                    recipientQuery = { membershipStatus: "member" };
+                }
+
+                const users = await User.find(recipientQuery, "_id");
+                const notifications = users.map(user => ({
+                    recipient: user._id,
+                    type: "announcement",
+                    title: "New Announcement: " + title,
+                    message: `New announcement in ${category}`,
+                    referenceId: updatedAnnouncement._id,
+                    isRead: false,
+                    createdAt: new Date()
+                }));
+
+                if (notifications.length > 0) {
+                    await Notification.insertMany(notifications);
+                }
+            } catch (err) {
+                console.error("Failed to send notifications for announcement update", err);
+            }
+        }
+        // ----------------------------
+
+        return NextResponse.json({ success: true, message: "Updated successfully", data: updatedAnnouncement });
     } catch (error) {
         return NextResponse.json({ success: false, message: "Server error" }, { status: 500 });
     }

@@ -1,6 +1,6 @@
 import {
   FaHome, FaBook, FaChartLine, FaCalendarAlt, FaComments,
-  FaUsers, FaBullhorn, FaHistory, FaUserCircle
+  FaUsers, FaBullhorn, FaHistory, FaUserCircle, FaBell
 } from "react-icons/fa";
 import { FaUpload } from "react-icons/fa6";
 
@@ -43,6 +43,12 @@ export const DASHBOARD_NAV = [
     title: "Announcements",
     href: "/dashbaord/announcements",
     icon: <FaBullhorn />,
+    roles: ["student", "admin", "super_admin"]
+  },
+  {
+    title: "Notifications",
+    href: "/dashbaord/notifications",
+    icon: <FaBell />,
     roles: ["student", "admin", "super_admin"]
   },
 

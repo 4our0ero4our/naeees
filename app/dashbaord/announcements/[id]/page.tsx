@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { FaArrowLeft, FaCalendar, FaUser, FaTag } from "react-icons/fa";
 import { motion } from "framer-motion";
 
@@ -10,6 +11,8 @@ export default function AnnouncementDetailsPage() {
     const params = useParams();
     const router = useRouter();
     const id = params?.id;
+    const { data: session } = useSession();
+    const isAdmin = (session?.user as any)?.role === "admin" || (session?.user as any)?.role === "super_admin";
 
     const [announcement, setAnnouncement] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -68,12 +71,14 @@ export default function AnnouncementDetailsPage() {
                     >
                         <FaArrowLeft />
                     </button>
-                    <button
-                        onClick={() => router.push(`/dashbaord/announcements/create?id=${id}`)}
-                        className="bg-white/20 backdrop-blur-md text-white px-4 py-3 rounded-full hover:bg-white hover:text-black transition-all font-bold text-sm uppercase tracking-wider"
-                    >
-                        Edit
-                    </button>
+                    {isAdmin && (
+                        <button
+                            onClick={() => router.push(`/dashbaord/announcements/create?id=${id}`)}
+                            className="bg-white/20 backdrop-blur-md text-white px-4 py-3 rounded-full hover:bg-white hover:text-black transition-all font-bold text-sm uppercase tracking-wider"
+                        >
+                            Edit
+                        </button>
+                    )}
                 </div>
 
                 <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 pb-16 max-w-4xl mx-auto">

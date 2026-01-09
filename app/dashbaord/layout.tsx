@@ -32,85 +32,28 @@ const SidebarContent = ({
   const navItems = getNavItemsByRole((session as any)?.user?.role);
 
   // Notification State
-  const [notifications, setNotifications] = useState({
-    events: 0,
-    materials: 0,
-    forum: 0,
-    announcements: 0
-  });
+  const [unreadCount, setUnreadCount] = useState(0);
 
-  // Check for updates on mount
+  // Poll for unread notifications
   useEffect(() => {
-    const checkUpdates = async () => {
+    const fetchUnread = async () => {
       try {
-        const lastEvents = localStorage.getItem("last_seen_events");
-        const lastMaterials = localStorage.getItem("last_seen_materials");
-        const lastForum = localStorage.getItem("last_seen_forum");
-
-        // 1. Fetch Counts for Events, Materials, Forum
-        // We pass the last seen dates. If null, the API currently returns 0.
-        // If we want to show a badge for "never visited", we might need to handle specific logic, 
-        // but typically "0" is fine until they set a baseline, or we could pass a very old date if missing.
-        // Let's rely on the API returning counts relative to the saved date.
-
-        let queryParams = new URLSearchParams();
-        if (lastEvents) queryParams.append("events", lastEvents);
-        if (lastMaterials) queryParams.append("materials", lastMaterials);
-        if (lastForum) queryParams.append("forum", lastForum);
-
-        const resCounts = await fetch(`/api/updates/counts?${queryParams.toString()}`);
-        let countsData = { events: 0, materials: 0, forum: 0 };
-
-        if (resCounts.ok) {
-          const { counts } = await resCounts.json();
-          countsData = counts || { events: 0, materials: 0, forum: 0 };
+        const res = await fetch("/api/notifications/unread");
+        if (res.ok) {
+          const data = await res.json();
+          setUnreadCount(data.count || 0);
         }
-
-        // 2. Fetch Unread Count for Announcements (New System)
-        const resAnnounce = await fetch("/api/announcements/unread");
-        let announceCount = 0;
-        if (resAnnounce.ok) {
-          const data = await resAnnounce.json();
-          announceCount = data.count || 0;
-        }
-
-        setNotifications({
-          events: countsData.events,
-          materials: countsData.materials,
-          forum: countsData.forum,
-          announcements: announceCount
-        });
-
       } catch (err) {
-        console.error("Failed to check notifications", err);
+        console.error("Failed to fetch unread count", err);
       }
     };
-    checkUpdates();
-    // Poll every 60 seconds
-    const interval = setInterval(checkUpdates, 60000);
+
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 30000); // 30s poll
     return () => clearInterval(interval);
   }, []);
 
-  // Handle click to clear notification
   const handleNavClick = (href: string) => {
-    const now = new Date().toISOString();
-
-    // For these timestamp-based sections, "clearing" means updating the last_seen time to NOW.
-    // This will make the count 0 on the next fetch (since nothing is newer than now).
-    // We can also optimistically set the local count to 0.
-
-    if (href === "/dashbaord/events") {
-      localStorage.setItem("last_seen_events", now);
-      setNotifications(prev => ({ ...prev, events: 0 }));
-    } else if (href === "/dashbaord/materials") {
-      localStorage.setItem("last_seen_materials", now);
-      setNotifications(prev => ({ ...prev, materials: 0 }));
-    } else if (href === "/dashbaord/forum") {
-      localStorage.setItem("last_seen_forum", now);
-      setNotifications(prev => ({ ...prev, forum: 0 }));
-    }
-    // Announcements are handled by their own page logic
-
     if (closeMobile) closeMobile();
   };
 
@@ -162,11 +105,7 @@ const SidebarContent = ({
         {navItems.map((item) => {
           const isActive = pathname === item.href;
 
-          const badgeCount =
-            (item.href === "/dashbaord/events" ? notifications.events : 0) +
-            (item.href === "/dashbaord/materials" ? notifications.materials : 0) +
-            (item.href === "/dashbaord/forum" ? notifications.forum : 0) +
-            (item.href === "/dashbaord/announcements" ? notifications.announcements : 0);
+          const badgeCount = item.href === "/dashbaord/notifications" ? unreadCount : 0;
 
           return (
             <Link
@@ -277,6 +216,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       return {
         title: "Announcements",
         subtitle: "Stay updated with the latest news and highlights."
+      };
+    }
+    if (path.includes("/notifications")) {
+      return {
+        title: "Notifications",
+        subtitle: "Stay updated with latest activities."
       };
     }
     // Default

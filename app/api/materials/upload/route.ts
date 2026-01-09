@@ -22,7 +22,7 @@ export async function POST(req: Request) {
 
     // Get form data
     const formData = await req.formData();
-    
+
     // Extract file
     const file = formData.get("file") as File;
     if (!file) {
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
       "application/vnd.ms-powerpoint",
       "application/vnd.openxmlformats-officedocument.presentationml.presentation", // .pptx
     ];
-    
+
     if (!allowedTypes.includes(file.type)) {
       return NextResponse.json(
         { success: false, message: "Invalid file type. Only PDF, DOC, DOCX, PPT, PPTX are allowed" },
@@ -109,6 +109,36 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+    // --- NOTIFICATION TRIGGER ---
+    try {
+      const { Notification } = await import("@/app/models/Notification.model");
+      const { User } = await import("@/app/models/User.model"); // Ensure User model is available
+
+      let recipientQuery: any = {};
+      if (visibility?.toLowerCase() === "members") {
+        recipientQuery.membershipStatus = "member";
+      }
+
+      const users = await User.find(recipientQuery, "_id");
+
+      const notifications = users.map(user => ({
+        recipient: user._id,
+        type: "material",
+        title: "New Material: " + title,
+        message: `${courseCode} material added for ${level} Level`,
+        referenceId: (material as any)._id,
+        isRead: false,
+        createdAt: new Date()
+      }));
+
+      if (notifications.length > 0) {
+        await Notification.insertMany(notifications);
+      }
+    } catch (err) {
+      console.error("Failed to crate notifications for material", err);
+    }
+    // ----------------------------
 
     return NextResponse.json({ success: true, data: material }, { status: 201 });
   } catch (error: any) {

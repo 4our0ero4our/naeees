@@ -149,6 +149,33 @@ export async function POST(req: Request) {
             publishedAt: status === "Published" ? new Date() : null
         });
 
+        // --- NOTIFICATION TRIGGER ---
+        if (status === "Published") {
+            const { Notification } = await import("@/app/models/Notification.model"); // Dynamic import to avoid circular dep if any
+            let recipientQuery = {};
+
+            if (visibility === "MembersOnly") {
+                recipientQuery = { membershipStatus: "member" };
+            }
+            // If Global, recipientQuery is {} (all users)
+
+            const users = await User.find(recipientQuery, "_id");
+            const notifications = users.map(user => ({
+                recipient: user._id,
+                type: "announcement",
+                title: "New Announcement: " + title,
+                message: `New announcement in ${category}`, // Simplified message
+                referenceId: newAnnouncement._id,
+                isRead: false,
+                createdAt: new Date()
+            }));
+
+            if (notifications.length > 0) {
+                await Notification.insertMany(notifications);
+            }
+        }
+        // ----------------------------
+
         return NextResponse.json({ success: true, message: "Announcement created", data: newAnnouncement });
 
     } catch (error) {

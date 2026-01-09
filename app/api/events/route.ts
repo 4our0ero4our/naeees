@@ -95,6 +95,39 @@ export async function POST(req: Request) {
             targetDepartment
         });
 
+        // --- NOTIFICATION TRIGGER ---
+        const { Notification } = await import("@/app/models/Notification.model");
+
+        let recipientQuery: any = {};
+
+        // Audience filter
+        if (audience === "members") {
+            recipientQuery.membershipStatus = "member";
+        }
+
+        // Department filter (if implemented strictly in User model)
+        // assuming User model has 'department' field
+        if (targetDepartment && targetDepartment !== 'All') {
+            recipientQuery.department = targetDepartment;
+        }
+
+        const users = await User.find(recipientQuery, "_id");
+
+        const notifications = users.map(user => ({
+            recipient: user._id,
+            type: "event",
+            title: "New Event: " + title,
+            message: `Event at ${venue} on ${new Date(date).toLocaleDateString()}`,
+            referenceId: newEvent._id,
+            isRead: false,
+            createdAt: new Date()
+        }));
+
+        if (notifications.length > 0) {
+            await Notification.insertMany(notifications);
+        }
+        // ----------------------------
+
         return NextResponse.json({ success: true, message: "Event created successfully", data: newEvent });
 
     } catch (error) {
