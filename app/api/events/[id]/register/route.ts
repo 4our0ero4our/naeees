@@ -10,7 +10,8 @@ function generateTicketCode() {
     return "TKT-" + Math.random().toString(36).substr(2, 9).toUpperCase();
 }
 
-export async function POST(req: Request, { params }: { params: Promise<{ id: string }> | { id: string } }) {
+export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
     try {
         const session = await auth();
         if (!session || !session.user) {
@@ -18,7 +19,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         }
 
         // Await params if it's a Promise (Next.js 15+)
-        const resolvedParams = params instanceof Promise ? await params : params;
+        // const resolvedParams = params instanceof Promise ? await params : params;
 
         const userId = (session.user as any).id;
         const userRole = (session.user as any).role;
@@ -27,11 +28,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         const user = await User.findById(userId);
         if (!user) return NextResponse.json({ success: false }, { status: 401 });
 
-        const event = await Event.findById(resolvedParams.id);
+        const event = await Event.findById(params.id);
         if (!event) return NextResponse.json({ success: false, message: "Event not found" }, { status: 404 });
 
         // Check if already registered
-        const existingReg = await EventRegistration.findOne({ event: resolvedParams.id, user: userId });
+        const existingReg = await EventRegistration.findOne({ event: params.id, user: userId });
         if (existingReg) {
             return NextResponse.json({ success: false, message: "Already registered" }, { status: 400 });
         }
@@ -60,7 +61,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         }
 
         const newRegistration = await EventRegistration.create({
-            event: resolvedParams.id,
+            event: params.id,
             user: userId,
             paymentStatus,
             paymentReceipt: paymentReceipt || null,

@@ -4,10 +4,11 @@ import { connectDB } from "@/app/lib/db/connect";
 import { Announcement } from "@/app/models/Announcement.model";
 
 // GET: Single Announcement
-export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
     try {
         await connectDB();
-        const { id } = await params;
+        const { id } = params;
         const announcement = await Announcement.findById(id).populate("author", "fullName");
         if (!announcement) {
             return NextResponse.json({ success: false, message: "Not found" }, { status: 404 });
@@ -19,14 +20,15 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 }
 
 // PATCH: Update Announcement
-export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function PATCH(req: Request, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
     try {
         const session = await auth();
         if (!session || ((session.user as any).role !== "admin" && (session.user as any).role !== "super_admin")) {
             return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 403 });
         }
 
-        const { id } = await params;
+        const { id } = params;
         const body = await req.json(); // Handling JSON updates for now (text/status)
         // Note: For image updates, we might need a separate endpoint or form-data handling here too, 
         // but for now keeping it simple for status/content updates.
@@ -56,14 +58,15 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 }
 
 // DELETE: Archive/Soft Delete
-export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: Request, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
     try {
         const session = await auth();
         if (!session || ((session.user as any).role !== "admin" && (session.user as any).role !== "super_admin")) {
             return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 403 });
         }
 
-        const { id } = await params;
+        const { id } = params;
         await connectDB();
         // Soft delete -> Archive
         const archived = await Announcement.findByIdAndUpdate(

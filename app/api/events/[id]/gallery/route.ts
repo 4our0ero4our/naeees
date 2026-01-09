@@ -5,7 +5,8 @@ import { connectDB } from "@/app/lib/db/connect";
 import { Event } from "@/app/models/Event.model";
 
 // POST: Upload Gallery Images
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
     try {
         const session = await auth();
         if (!session || ((session.user as any).role !== "admin" && (session.user as any).role !== "super_admin")) {
@@ -34,11 +35,11 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         await connectDB();
 
         // Await params if Promise (Next.js 15+ compat)
-        const resolvedParams = await Promise.resolve(params);
-        console.log("Attempting to update Event ID:", resolvedParams.id);
+        // const resolvedParams = await Promise.resolve(params);
+        console.log("Attempting to update Event ID:", params.id);
 
         const updatedEvent = await Event.findByIdAndUpdate(
-            resolvedParams.id,
+            params.id,
             { $push: { galleryImages: { $each: uploadedUrls } } },
             { new: true }
         );
@@ -47,7 +48,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         if (updatedEvent) {
             console.log("Updated Event Gallery Length:", updatedEvent.galleryImages?.length);
         } else {
-            console.log("CRITICAL: Event not found or update failed for ID:", resolvedParams.id);
+            console.log("CRITICAL: Event not found or update failed for ID:", params.id);
         }
 
         return NextResponse.json({ success: true, message: "Gallery updated", data: updatedEvent });
@@ -59,7 +60,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 }
 
 // DELETE: Remove Gallery Images
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
     try {
         const session = await auth();
         if (!session || ((session.user as any).role !== "admin" && (session.user as any).role !== "super_admin")) {
@@ -100,10 +102,8 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
 
         await connectDB();
 
-        const resolvedParams = await Promise.resolve(params);
-
         const updatedEvent = await Event.findByIdAndUpdate(
-            resolvedParams.id,
+            params.id,
             { $pull: { galleryImages: { $in: imageUrls } } },
             { new: true }
         );

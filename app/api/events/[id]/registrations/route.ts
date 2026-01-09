@@ -6,7 +6,8 @@ import { EventRegistration } from "@/app/models/EventRegistration.model";
 import { User } from "@/app/models/User.model";
 
 // GET: List all registrations for an event (Admin Only)
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
     try {
         const session = await auth();
         if (!session || ((session.user as any).role !== "admin" && (session.user as any).role !== "super_admin")) {
@@ -16,9 +17,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
         await connectDB();
 
         // Await params if it's a Promise
-        const resolvedParams = params instanceof Promise ? await params : params;
+        // const resolvedParams = params instanceof Promise ? await params : params;
 
-        const registrations = await EventRegistration.find({ event: resolvedParams.id })
+        const registrations = await EventRegistration.find({ event: params.id })
             .populate("user", "fullName email matricNumber membershipStatus")
             .sort({ createdAt: -1 });
 

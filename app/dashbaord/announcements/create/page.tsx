@@ -120,6 +120,16 @@ function EditorContent() {
         return () => window.removeEventListener("beforeunload", handleBeforeUnload);
     }, [isDirty]);
 
+    // Fix: Restore content when switching back from Preview Mode
+    useEffect(() => {
+        if (!isPreview && contentEditableRef.current && contentHTML) {
+            if (contentEditableRef.current.innerHTML !== contentHTML) {
+                contentEditableRef.current.innerHTML = contentHTML;
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isPreview]);
+
     const handleCommand = (command: string, value: string = "") => {
         document.execCommand(command, false, value);
         contentEditableRef.current?.focus();

@@ -5,7 +5,8 @@ import { connectDB } from "@/app/lib/db/connect";
 import { EventRegistration } from "@/app/models/EventRegistration.model";
 
 // PATCH: Approve/Reject Registration
-export async function PATCH(req: Request, { params }: { params: { id: string } }) { // id here is Registration ID
+export async function PATCH(req: Request, props: { params: Promise<{ id: string }> }) { // id here is Registration ID
+    const params = await props.params;
     try {
         const session = await auth();
         if (!session || ((session.user as any).role !== "admin" && (session.user as any).role !== "super_admin")) {
@@ -22,10 +23,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         await connectDB();
 
         // Await params if Promise
-        const resolvedParams = params instanceof Promise ? await params : params;
+        // const resolvedParams = params instanceof Promise ? await params : params;
 
         const registration = await EventRegistration.findByIdAndUpdate(
-            resolvedParams.id,
+            params.id,
             { paymentStatus: status },
             { new: true }
         );

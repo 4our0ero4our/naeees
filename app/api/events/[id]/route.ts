@@ -6,14 +6,15 @@ import { Event } from "@/app/models/Event.model";
 import { EventRegistration } from "@/app/models/EventRegistration.model";
 
 // GET: Get Single Event Details + User Registration Status
-export async function GET(req: Request, { params }: { params: Promise<{ id: string }> | { id: string } }) {
+export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
     try {
         const session = await auth();
         await connectDB();
 
         // Await params if it's a Promise (Next.js 15+)
-        const resolvedParams = params instanceof Promise ? await params : params;
-        const event = await Event.findById(resolvedParams.id).populate("organizer", "fullName email");
+        // const resolvedParams = params instanceof Promise ? await params : params;
+        const event = await Event.findById(params.id).populate("organizer", "fullName email");
         if (!event) {
             return NextResponse.json({ success: false, message: "Event not found" }, { status: 404 });
         }
@@ -21,7 +22,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         let registration = null;
         if (session && session.user) {
             registration = await EventRegistration.findOne({
-                event: resolvedParams.id,
+                event: params.id,
                 user: (session.user as any).id
             });
         }
@@ -35,7 +36,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 }
 
 // PATCH: Update Event (Admin)
-export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> | { id: string } }) {
+export async function PATCH(req: Request, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
     try {
         const session = await auth();
         if (!session || ((session.user as any).role !== "admin" && (session.user as any).role !== "super_admin")) {
@@ -46,8 +48,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         await connectDB();
 
         // Await params if it's a Promise (Next.js 15+)
-        const resolvedParams = params instanceof Promise ? await params : params;
-        const updatedEvent = await Event.findByIdAndUpdate(resolvedParams.id, body, { new: true });
+        // const resolvedParams = params instanceof Promise ? await params : params;
+        const updatedEvent = await Event.findByIdAndUpdate(params.id, body, { new: true });
 
         return NextResponse.json({ success: true, message: "Event updated", data: updatedEvent });
 
@@ -57,7 +59,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 }
 
 // DELETE: Cancel/Delete Event
-export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> | { id: string } }) {
+export async function DELETE(req: Request, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
     try {
         const session = await auth();
         if (!session || ((session.user as any).role !== "admin" && (session.user as any).role !== "super_admin")) {
@@ -67,8 +70,8 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
         await connectDB();
 
         // Await params if it's a Promise (Next.js 15+)
-        const resolvedParams = params instanceof Promise ? await params : params;
-        await Event.findByIdAndDelete(resolvedParams.id);
+        // const resolvedParams = params instanceof Promise ? await params : params;
+        await Event.findByIdAndDelete(params.id);
 
         // Optionally delete registrations or mark them cancelled?
         // For simplicity, just removing event now. 
