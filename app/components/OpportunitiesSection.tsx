@@ -72,7 +72,7 @@ const OpportunitiesSection = () => {
                 className="pt-4"
               >
                 <Link
-                  href="#"
+                  href="/dashbaord/announcements"
                   className="inline-flex items-center gap-2 bg-black text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 border-2 border-transparent hover:bg-gray-900 hover:scale-105 shadow-[6px_6px_0px_0px_#22C55E] hover:shadow-[3px_3px_0px_0px_#22C55E] hover:translate-y-[3px]"
                 >
                   <FaArrowRight className="w-5 h-5" />
