@@ -317,8 +317,8 @@ const MobileMenuItem = ({ item, onLinkClick }: { item: any; onLinkClick: () => v
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-300 ${isOpen
-            ? "bg-[#22C55E] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-            : "bg-white border-transparent hover:bg-gray-50"
+          ? "bg-[#22C55E] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+          : "bg-white border-transparent hover:bg-gray-50"
           }`}
       >
         <span className={`text-lg font-black uppercase tracking-tight ${isOpen ? "text-black" : "text-gray-800"}`}>
@@ -353,10 +353,8 @@ const MobileMenuItem = ({ item, onLinkClick }: { item: any; onLinkClick: () => v
                 onClick={onLinkClick}
                 className="group flex items-center gap-3 py-2"
               >
-                <div className="w-8 h-8 rounded-full border-2 border-black bg-white flex items-center justify-center shrink-0 group-hover:bg-[#EAB308] transition-colors">
-                  <div className="w-4 h-4 text-black">
-                    {subItem.icon}
-                  </div>
+                <div className="w-8 h-8 rounded-full border-2 border-black bg-white flex items-center justify-center shrink-0 group-hover:bg-[#EAB308] transition-colors text-black">
+                  {subItem.icon}
                 </div>
                 <span className="text-black font-bold text-base group-hover:translate-x-1 transition-transform">
                   {subItem.label}

@@ -68,6 +68,7 @@ const SidebarContent = ({
           </div>
 
           {!isCollapsed && (
+            <Link href="/">
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               className="flex flex-col overflow-hidden whitespace-nowrap"
@@ -79,6 +80,7 @@ const SidebarContent = ({
                 {(session as any)?.user?.role?.replace('_', ' ')}
               </span>
             </motion.div>
+            </Link>
           )}
         </div>
 
