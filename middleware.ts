@@ -47,7 +47,7 @@ export const config = {
      * - public folder files
      * Note: We include login in the matcher to redirect authenticated users away
      */
-    "/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\..*|register).*)",
+    "/((?!api/auth|_next/static|_next/image|FavIcon.png|.*\\..*|register).*)",
   ],
 };
 

@@ -16,8 +16,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "NAEEES Digital Portal - The Digital Campus for EEE Students",
+  title: "NAEEES Digital Portal - The Digital Campus for the Students",
   description: "The NAEEES Digital Portal is a centralized academic and professional hub designed to support Electrical and Electronics Engineering students",
+  icons: {
+    icon: "/Images/FavIcon.png",
+  },
 };
 
 export default function RootLayout({
