@@ -205,6 +205,7 @@ const Navbar = () => {
               </div>
               <span className="font-heading font-black text-xl lg:text-2xl text-black tracking-tight">
                 NAEEES
+                <span className="text-[#22C55E]">.</span>
               </span>
             </Link>
           </div>

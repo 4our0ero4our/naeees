@@ -110,7 +110,7 @@ const EventsSection = () => {
 
           <motion.div variants={fadeInUp}>
             <Link
-              href="/events"
+              href="dashbaord/events"
               className="group flex items-center gap-2 font-bold text-lg border-b-2 border-black pb-1 hover:text-[#22C55E] hover:border-[#22C55E] transition-all"
             >
               View Full Calendar <FaArrowRight className="group-hover:translate-x-2 transition-transform" />
@@ -166,8 +166,9 @@ const EventsSection = () => {
               </div>
             </div>
 
+            {/* Link to whatsapp */}
             <Link
-              href="/events/request-feature"
+              href="https://wa.me/+2348112110878"
               className="bg-white text-black px-8 py-4 rounded-xl font-black text-lg border-2 border-black shadow-[4px_4px_0px_0px_white] hover:shadow-[2px_2px_0px_0px_white] hover:translate-y-[2px] transition-all whitespace-nowrap"
             >
               Request Feature
@@ -189,7 +190,7 @@ const EventCard = ({ event }: { event: any }) => {
 
   const handleShare = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigator.clipboard.writeText(`https://naeees-portal.com${event.link}`);
+    navigator.clipboard.writeText(`https://naeeesfutminna.vercel.app/${event.link}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

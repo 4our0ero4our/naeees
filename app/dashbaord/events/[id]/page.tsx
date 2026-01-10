@@ -5,12 +5,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
-import { FaCalendarAlt, FaMapMarkerAlt, FaClock, FaCheckCircle, FaTimes, FaQrcode, FaDownload, FaArrowLeft, FaReceipt, FaUsers, FaImages, FaCloudUploadAlt, FaEye } from "react-icons/fa";
+import { FaCalendarAlt, FaMapMarkerAlt, FaClock, FaCheckCircle, FaTimes, FaQrcode, FaDownload, FaArrowLeft, FaReceipt, FaUsers, FaImages, FaCloudUploadAlt, FaEye, FaEdit, FaSave } from "react-icons/fa";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import CustomAlert from "@/app/components/CustomAlert";
 import jsPDF from "jspdf";
 import DigitalTicketCard from "@/app/components/events/DigitalTicketCard";
+import ConfirmationModal from "@/app/components/ConfirmationModal";
 
 export default function EventDetailsPage() {
     const { id } = useParams();
@@ -29,6 +30,20 @@ export default function EventDetailsPage() {
     const [loading, setLoading] = useState(true);
     const [registering, setRegistering] = useState(false);
     const [alert, setAlert] = useState<any>(null);
+
+    // Edit State
+    const [isEditing, setIsEditing] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [editData, setEditData] = useState<any>({});
+
+    // Confirmation Modal State
+    const [confirmModal, setConfirmModal] = useState({
+        isOpen: false,
+        title: "",
+        message: "",
+        onConfirm: () => { },
+        isDangerous: false
+    });
 
     // Receipt Upload State
     const [receiptFile, setReceiptFile] = useState<File | null>(null);
@@ -84,6 +99,40 @@ export default function EventDetailsPage() {
 
 
     // --- Actions ---
+
+    // --- Actions ---
+
+    const handleEditClick = () => {
+        setEditData({
+            title: event.title,
+            description: event.description,
+            venue: event.venue,
+            date: event.date ? new Date(event.date).toISOString().split('T')[0] : '',
+            time: event.time,
+            type: event.type,
+            price: event.price,
+            memberDiscount: event.memberDiscount,
+            status: event.status
+        });
+        setIsEditing(true);
+    };
+
+    const handleUpdateEvent = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSaving(true);
+        try {
+            const res = await axios.patch(`/api/events/${id}`, editData);
+            if (res.data.success) {
+                setEvent(res.data.data);
+                setIsEditing(false);
+                setAlert({ isOpen: true, type: "success", title: "Success", message: "Event updated successfully." });
+            }
+        } catch (error: any) {
+            setAlert({ isOpen: true, type: "error", title: "Error", message: error.response?.data?.message || "Failed to update event." });
+        } finally {
+            setSaving(false);
+        }
+    };
 
     const handleRegister = async () => {
         if (event.type === 'paid' && !receiptFile) {
@@ -150,24 +199,31 @@ export default function EventDetailsPage() {
 
     const deleteSelectedImages = async () => {
         if (selectedImages.size === 0) return;
-        if (!confirm(`Are you sure you want to delete ${selectedImages.size} images?`)) return;
 
-        setIsDeletingGallery(true);
-        try {
-            const res = await axios.delete(`/api/events/${id}/gallery`, {
-                data: { imageUrls: Array.from(selectedImages) }
-            });
+        setConfirmModal({
+            isOpen: true,
+            title: "Delete Images?",
+            message: `Are you sure you want to delete ${selectedImages.size} images? This action cannot be undone.`,
+            isDangerous: true,
+            onConfirm: async () => {
+                setIsDeletingGallery(true);
+                try {
+                    const res = await axios.delete(`/api/events/${id}/gallery`, {
+                        data: { imageUrls: Array.from(selectedImages) }
+                    });
 
-            if (res.data.success) {
-                setAlert({ isOpen: true, type: "success", title: "Deleted", message: "Images deleted successfully." });
-                setSelectedImages(new Set());
-                fetchEventDetails();
+                    if (res.data.success) {
+                        setAlert({ isOpen: true, type: "success", title: "Deleted", message: "Images deleted successfully." });
+                        setSelectedImages(new Set());
+                        fetchEventDetails();
+                    }
+                } catch (error) {
+                    setAlert({ isOpen: true, type: "error", title: "Failed", message: "Failed to delete images." });
+                } finally {
+                    setIsDeletingGallery(false);
+                }
             }
-        } catch (error) {
-            setAlert({ isOpen: true, type: "error", title: "Failed", message: "Failed to delete images." });
-        } finally {
-            setIsDeletingGallery(false);
-        }
+        });
     };
 
     const updateRegistrationStatus = async (regId: string, status: 'approved' | 'rejected') => {
@@ -363,10 +419,31 @@ export default function EventDetailsPage() {
         <div className="min-h-screen pb-20 w-full font-sans">
             {alert && <CustomAlert {...alert} onClose={() => setAlert(null)} />}
 
-            {/* Back */}
-            <Link href="/dashbaord/events" className="inline-flex items-center gap-2 text-gray-500 font-bold mb-6 hover:text-black transition-colors">
-                <FaArrowLeft /> Back to Events
-            </Link>
+            <ConfirmationModal
+                isOpen={confirmModal.isOpen}
+                onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+                onConfirm={confirmModal.onConfirm}
+                title={confirmModal.title}
+                message={confirmModal.message}
+                isDangerous={confirmModal.isDangerous}
+                confirmText={confirmModal.isDangerous ? "Delete" : "Confirm"}
+            />
+
+            {/* Header Actions */}
+            <div className="flex justify-between items-center mb-6">
+                <Link href="/dashbaord/events" className="inline-flex items-center gap-2 text-gray-500 font-bold hover:text-black transition-colors">
+                    <FaArrowLeft /> Back to Events
+                </Link>
+
+                {isAdmin && (
+                    <button
+                        onClick={handleEditClick}
+                        className="bg-black text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-gray-800 transition-colors"
+                    >
+                        <FaEdit /> Edit Event
+                    </button>
+                )}
+            </div>
 
             {/* TABS */}
             <div className="flex gap-6 border-b-2 border-gray-200 mb-8 overflow-x-auto">
@@ -550,7 +627,7 @@ export default function EventDetailsPage() {
                                         {/* Admin Selection Overlay */}
                                         {isAdmin && (
                                             <div
-                                                className={`absolute top-2 left-2 z-20 cursor-pointer p-2 rounded-full transition-all ${isSelected ? 'bg-red-500 text-white' : 'bg-white/50 text-transparent hover:bg-white text-gray-400'}`}
+                                                className={`absolute top-2 left-2 z-20 cursor-pointer p-2 rounded-full transition-all ${isSelected ? 'bg-red-500 text-white' : 'bg-white/50 text-transparent hover:bg-white hover:text-gray-400'}`}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     toggleImageSelection(img);
@@ -708,6 +785,142 @@ export default function EventDetailsPage() {
                 </div>
             )}
 
+            {/* Edit Event Modal */}
+            {isEditing && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+                    onClick={() => setIsEditing(false)}
+                >
+                    <div
+                        className="bg-white max-w-2xl w-full p-6 rounded-2xl border-3 border-black shadow-xl max-h-[90vh] overflow-y-auto"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h2 className="text-2xl font-black font-heading mb-6">Edit Event</h2>
+                        <form onSubmit={handleUpdateEvent} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">Title</label>
+                                <input
+                                    type="text"
+                                    value={editData.title}
+                                    onChange={(e) => setEditData({ ...editData, title: e.target.value })}
+                                    className="w-full border-2 border-gray-200 rounded-xl p-3 font-medium focus:border-black focus:ring-0"
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">Description</label>
+                                <textarea
+                                    value={editData.description}
+                                    onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+                                    className="w-full border-2 border-gray-200 rounded-xl p-3 font-medium focus:border-black focus:ring-0 min-h-[100px]"
+                                    required
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">Date</label>
+                                    <input
+                                        type="date"
+                                        value={editData.date}
+                                        onChange={(e) => setEditData({ ...editData, date: e.target.value })}
+                                        className="w-full border-2 border-gray-200 rounded-xl p-3 font-medium focus:border-black focus:ring-0"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">Time</label>
+                                    <input
+                                        type="time"
+                                        value={editData.time}
+                                        onChange={(e) => setEditData({ ...editData, time: e.target.value })}
+                                        className="w-full border-2 border-gray-200 rounded-xl p-3 font-medium focus:border-black focus:ring-0"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">Venue</label>
+                                <input
+                                    type="text"
+                                    value={editData.venue}
+                                    onChange={(e) => setEditData({ ...editData, venue: e.target.value })}
+                                    className="w-full border-2 border-gray-200 rounded-xl p-3 font-medium focus:border-black focus:ring-0"
+                                    required
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">Type</label>
+                                    <select
+                                        value={editData.type}
+                                        onChange={(e) => setEditData({ ...editData, type: e.target.value })}
+                                        className="w-full border-2 border-gray-200 rounded-xl p-3 font-medium focus:border-black focus:ring-0"
+                                    >
+                                        <option value="free">Free</option>
+                                        <option value="paid">Paid</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">Price (₦)</label>
+                                    <input
+                                        type="number"
+                                        value={editData.price}
+                                        onChange={(e) => setEditData({ ...editData, price: Number(e.target.value) })}
+                                        className="w-full border-2 border-gray-200 rounded-xl p-3 font-medium focus:border-black focus:ring-0"
+                                        disabled={editData.type === 'free'}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">Status</label>
+                                    <select
+                                        value={editData.status}
+                                        onChange={(e) => setEditData({ ...editData, status: e.target.value })}
+                                        className="w-full border-2 border-gray-200 rounded-xl p-3 font-medium focus:border-black focus:ring-0"
+                                    >
+                                        <option value="upcoming">Upcoming</option>
+                                        <option value="ongoing">Ongoing</option>
+                                        <option value="completed">Completed</option>
+                                        <option value="cancelled">Cancelled</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">Member Discount (%)</label>
+                                <input
+                                    type="number"
+                                    value={editData.memberDiscount}
+                                    onChange={(e) => setEditData({ ...editData, memberDiscount: Number(e.target.value) })}
+                                    className="w-full border-2 border-gray-200 rounded-xl p-3 font-medium focus:border-black focus:ring-0"
+                                />
+                            </div>
+
+
+                            <div className="flex justify-end gap-3 pt-4">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsEditing(false)}
+                                    className="px-6 py-3 font-bold text-gray-500 hover:bg-gray-100 rounded-xl transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={saving}
+                                    className="bg-black text-white px-8 py-3 rounded-xl font-bold border-2 border-black hover:bg-gray-800 transition-colors flex items-center gap-2"
+                                >
+                                    {saving ? "Saving..." : <><FaSave /> Save Changes</>}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
             {/* View Receipt Modal (Admin) */}
             {viewReceiptUrl && (
                 <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" onClick={() => setViewReceiptUrl(null)}>
@@ -727,7 +940,7 @@ export default function EventDetailsPage() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/90 z-[60] flex items-center justify-center p-4 backdrop-blur-sm"
+                        className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
                         onClick={() => setSelectedGalleryImage(null)}
                     >
                         <motion.div
