@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
@@ -54,6 +54,241 @@ const focusAreas = [
     { title: "Community Engagement", desc: "Peer discussions, forums, and collaborative learning.", icon: <FaComments /> },
     { title: "Leadership Development", desc: "Student representation and organizational experience.", icon: <FaUsers /> },
 ];
+
+
+// --- EXECUTIVES DATA ---
+const executivesData = [
+    { id: 1, name: "Ibrahim Sadiq", role: "President", image: null, category: "Leadership" },
+    { id: 2, name: "Sarah Okafor", role: "Vice President", image: null, category: "Leadership" },
+    { id: 3, name: "Mohammed Ali", role: "Gen. Secretary", image: null, category: "Secretariat" },
+    { id: 4, name: "Chinedu Obi", role: "Academic Director", image: null, category: "Academic" },
+    { id: 5, name: "Fatima Yusuf", role: "Welfare Director", image: null, category: "Welfare" },
+    { id: 6, name: "Emeka Nnamdi", role: "P.R.O.", image: null, category: "Media" },
+    { id: 7, name: "Grace Adebayo", role: "Fin. Secretary", image: null, category: "Finance" },
+    { id: 8, name: "Tunde Bakare", role: "Social Director", image: null, category: "Social" },
+    { id: 9, name: "Aisha Bello", role: "Asst. Gen. Sec.", image: null, category: "Secretariat" },
+    { id: 10, name: "Samuel Kalu", role: "Technical Director", image: null, category: "Academic" },
+    { id: 11, name: "Esther Danjuma", role: "Sports Director", image: null, category: "Social" },
+    { id: 12, name: "Kabir Musa", role: "Treasurer", image: null, category: "Finance" },
+];
+
+const galleryImages = [
+    { id: 1, src: "", alt: "Students in Lab" }, // Placeholders
+    { id: 2, src: "", alt: "Workshop Session" },
+    { id: 3, src: "", alt: "Group Photo" },
+    { id: 4, src: "", alt: "Award Ceremony" },
+    { id: 5, src: "", alt: "Field Trip" },
+    { id: 6, src: "", alt: "Conference" },
+];
+
+// --- SUB-COMPONENT: EXECUTIVE SECTION ---
+const ExecutiveSection = () => {
+    const [activeTab, setActiveTab] = useState("All");
+    const [page, setPage] = useState(0);
+    const itemsPerPage = 6;
+
+    const tabs = ["All", "Leadership", "Academic", "Welfare", "Social", "Finance"];
+
+    const filtered = activeTab === "All"
+        ? executivesData
+        : executivesData.filter(e => e.category === activeTab);
+
+    const paginated = filtered.slice(page * itemsPerPage, (page + 1) * itemsPerPage);
+    const totalPages = Math.ceil(filtered.length / itemsPerPage);
+
+    // Reset page when tab changes
+    React.useEffect(() => { setPage(0); }, [activeTab]);
+
+    return (
+        <section id="executives" className="py-24 px-4 sm:px-6 lg:px-8 bg-black text-white border-b-4 border-black relative overflow-hidden">
+            {/* Background Grid */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
+
+            <div className="max-w-[1400px] mx-auto relative z-10">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+
+                    {/* Left: Headers & Filters */}
+                    <div className="lg:col-span-4 flex flex-col items-start">
+                        <div className="inline-block bg-[#EAB308] text-black px-4 py-1 rounded-full font-bold text-sm mb-6 border-2 border-white">
+                            NAEEES LEADERSHIP
+                        </div>
+                        <h2 className="text-5xl md:text-6xl font-black mb-8 uppercase leading-none">
+                            Meet Our<br /><span className="text-[#22C55E]">Team</span>.
+                        </h2>
+                        <p className="text-white text-lg mb-12 max-w-sm font-medium">
+                            The dedicated students working behind the scenes to drive innovation and success for the department.
+                        </p>
+
+                        {/* Filters */}
+                        <div className="flex flex-wrap gap-2 mb-8">
+                            {tabs.map(tab => (
+                                <button
+                                    key={tab}
+                                    onClick={() => setActiveTab(tab)}
+                                    className={`px-4 py-2 rounded-full font-bold text-sm border-2 transition-all ${activeTab === tab
+                                            ? "bg-white text-black border-white"
+                                            : "bg-transparent text-gray-500 border-gray-700 hover:border-white hover:text-white"
+                                        }`}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Pagination Controls (Desktop) */}
+                        <div className="hidden lg:flex gap-4 mt-auto">
+                            <button
+                                disabled={page === 0}
+                                onClick={() => setPage(p => Math.max(0, p - 1))}
+                                className="w-12 h-12 rounded-full border-2 border-white flex items-center justify-center hover:bg-white hover:text-black disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-white transition-all"
+                            >
+                                <FaArrowRight className="rotate-180" />
+                            </button>
+                            <span className="flex items-center font-bold text-xl">
+                                {page + 1} <span className="text-gray-600 mx-2">/</span> {Math.max(1, totalPages)}
+                            </span>
+                            <button
+                                disabled={page >= totalPages - 1}
+                                onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+                                className="w-12 h-12 rounded-full border-2 border-white flex items-center justify-center hover:bg-white hover:text-black disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-white transition-all"
+                            >
+                                <FaArrowRight />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Right: Grid */}
+                    <div className="lg:col-span-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-full content-start">
+                            {paginated.map((exec) => (
+                                <motion.div
+                                    key={exec.id}
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="group relative bg-[#111] border-2 border-gray-800 rounded-2xl overflow-hidden hover:border-[#22C55E] transition-colors"
+                                >
+                                    {/* Larger Image Area */}
+                                    <div className="aspect-[4/5] bg-gray-900 relative">
+                                        {/* Placeholder for Image */}
+                                        <div className="w-full h-full flex items-center justify-center text-gray-700">
+                                            <FaUsers className="text-6xl" />
+                                        </div>
+
+                                        {/* Overlay Gradient */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
+
+                                        {/* Text Bottom */}
+                                        <div className="absolute bottom-0 left-0 w-full p-6">
+                                            <h3 className="text-white font-bold text-xl leading-tight mb-1 group-hover:text-[#22C55E] transition-colors">{exec.name}</h3>
+                                            <p className="text-gray-400 text-sm font-bold uppercase tracking-wider">{exec.role}</p>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+
+                        {/* Pagination Controls (Mobile) */}
+                        <div className="flex lg:hidden gap-4 mt-8 justify-center">
+                            <button
+                                disabled={page === 0}
+                                onClick={() => setPage(p => Math.max(0, p - 1))}
+                                className="w-12 h-12 rounded-full border-2 border-white flex items-center justify-center hover:bg-white hover:text-black disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-white transition-all"
+                            >
+                                <FaArrowRight className="rotate-180" />
+                            </button>
+                            <span className="flex items-center font-bold text-xl">
+                                {page + 1} <span className="text-gray-600 mx-2">/</span> {Math.max(1, totalPages)}
+                            </span>
+                            <button
+                                disabled={page >= totalPages - 1}
+                                onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+                                className="w-12 h-12 rounded-full border-2 border-white flex items-center justify-center hover:bg-white hover:text-black disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-white transition-all"
+                            >
+                                <FaArrowRight />
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    );
+};
+
+// --- SUB-COMPONENT: GALLERY SECTION ---
+const GallerySection = () => {
+    return (
+        <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white border-b-4 border-black">
+            <div className="max-w-[1400px] mx-auto">
+                <div className="flex flex-col md:flex-row justify-between items-end mb-12">
+                    <div>
+                        <h2 className="text-4xl md:text-5xl font-black uppercase mb-4">Life at <span className="text-[#22C55E]">NAEEES</span></h2>
+                        <p className="text-lg text-gray-700 font-medium max-w-lg">
+                            Capturing the moments, innovations, and spirit of our engineering community.
+                        </p>
+                    </div>
+                    <Link href="#" className="hidden md:flex items-center gap-2 font-bold text-lg border-b-2 border-black pb-1 hover:text-[#22C55E] hover:border-[#22C55E] transition-all">
+                        View Full Gallery <FaArrowRight />
+                    </Link>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[300px]">
+                    {/* 1. Large Feature */}
+                    <div className="md:col-span-2 lg:col-span-2 row-span-2 bg-gray-100 rounded-2xl border-4 border-black relative overflow-hidden group">
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
+                            <span className="font-black text-gray-400 text-6xl">1</span>
+                        </div>
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <FaComments className="text-white text-6xl" />
+                        </div>
+                    </div>
+
+                    {/* 2. Portrait */}
+                    <div className="bg-gray-100 rounded-2xl border-4 border-black relative overflow-hidden group">
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
+                            <span className="font-black text-gray-400 text-4xl">2</span>
+                        </div>
+                    </div>
+
+                    {/* 3. Portrait */}
+                    <div className="bg-gray-100 rounded-2xl border-4 border-black relative overflow-hidden group">
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
+                            <span className="font-black text-gray-400 text-4xl">3</span>
+                        </div>
+                    </div>
+
+                    {/* 4. Wide */}
+                    <div className="md:col-span-2 bg-gray-100 rounded-2xl border-4 border-black relative overflow-hidden group">
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
+                            <span className="font-black text-gray-400 text-4xl">4</span>
+                        </div>
+                    </div>
+
+                    {/* 5. Portrait */}
+                    <div className="bg-gray-100 rounded-2xl border-4 border-black relative overflow-hidden group">
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
+                            <span className="font-black text-gray-400 text-4xl">5</span>
+                        </div>
+                    </div>
+
+                    {/* 6. Portrait */}
+                    <div className="bg-gray-100 rounded-2xl border-4 border-black relative overflow-hidden group">
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
+                            <span className="font-black text-gray-400 text-4xl">6</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mt-8 text-center md:hidden">
+                    <Link href="#" className="inline-flex items-center gap-2 font-bold text-lg border-b-2 border-black pb-1">
+                        View Full Gallery <FaArrowRight />
+                    </Link>
+                </div>
+            </div>
+        </section>
+    );
+};
 
 export default function AboutPage() {
     return (
@@ -249,49 +484,11 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            {/* 6. EXECUTIVE TEAM */}
-            <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gray-50 border-b-4 border-black" id="executives">
-                <div className="max-w-7xl mx-auto">
-                    <h2 className="text-4xl font-black mb-12 text-center uppercase">Meet the Executive Team</h2>
+            {/* 6. EXECUTIVE TEAM (Redesigned) */}
+            <ExecutiveSection />
 
-                    {/* Using placeholders as requested */}
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {[
-                            { role: "President", name: "Executive Name" },
-                            { role: "Vice President", name: "Executive Name" },
-                            { role: "Gen. Secretary", name: "Executive Name" },
-                            { role: "Academic Director", name: "Executive Name" },
-                            { role: "Welfare Director", name: "Executive Name" },
-                            { role: "P.R.O.", name: "Executive Name" },
-                            { role: "Fin. Secretary", name: "Executive Name" },
-                            { role: "Social Director", name: "Executive Name" },
-                        ].map((exec, i) => (
-                            <div key={i} className="bg-white border-2 border-black rounded-xl p-4 text-center hover:shadow-[4px_4px_0px_0px_black] transition-shadow">
-                                <div className="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-4 border-2 border-black flex items-center justify-center text-gray-400">
-                                    <FaUsers className="text-3xl" />
-                                </div>
-                                <h3 className="font-bold text-lg mb-1">{exec.name}</h3>
-                                <p className="text-[#22C55E] font-bold text-sm uppercase tracking-wide">{exec.role}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* 7. ORGANIZATIONAL STRUCTURE */}
-            <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white border-b-4 border-black">
-                <div className="max-w-4xl mx-auto text-center">
-                    <h2 className="text-3xl font-black mb-8 uppercase">Structure</h2>
-                    <div className="flex flex-wrap justify-center gap-4 font-bold text-lg">
-                        {["President", "Vice President", "General Secretary", "Academic Director", "Welfare Director", "Public Relations Officer"].map((role, i) => (
-                            <div key={i} className="flex items-center">
-                                <span className="bg-gray-100 border-2 border-black px-4 py-2 rounded-lg">{role}</span>
-                                {i < 5 && <div className="hidden sm:block w-8 h-0.5 bg-black mx-2"></div>}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+            {/* 7. GALLERY SECTION */}
+            <GallerySection />
 
             {/* 8. MEMBERSHIP & 9. IMPACT (Combined for layout) */}
             <section className="bg-black text-white">
