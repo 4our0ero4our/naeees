@@ -83,7 +83,7 @@ const TrustSection = () => {
           variants={fadeInUp}
           className="font-heading font-black text-4xl sm:text-6xl text-black mb-8 uppercase tracking-tight leading-none"
         >
-          Built for NAEEES.<br />
+          Built for Students.<br />
           <motion.span
             variants={scaleIn}
             className="text-white bg-black px-4 inline-block transform -rotate-2 mt-2 shadow-[4px_4px_0px_0px_#22C55E]"
@@ -96,14 +96,14 @@ const TrustSection = () => {
           variants={fadeInUp}
           className="text-xl sm:text-2xl text-gray-700 font-medium leading-relaxed max-w-3xl mx-auto"
         >
-          This portal is officially developed to support NAEEES activities and empower Electrical and Electronics Engineering students with digital tools that enhance learning and engagement.
+          This portal is officially developed to support student activities and empower Electrical and Electronics Engineering students with digital tools that enhance learning and engagement.
         </motion.p>
 
         {/* Decorative 'Official Seal' text */}
         <motion.div variants={fadeInUp} className="mt-12 flex items-center justify-center gap-4">
           <motion.div variants={widthGrow} className="h-1 bg-black"></motion.div>
           <div className="font-mono text-sm font-black text-black tracking-widest uppercase">
-            EST. {new Date().getFullYear()} • OFFICIAL DEPARTMENTAL PORTAL
+            EST. {new Date().getFullYear()} • OFFICIAL DIGITAL PORTAL
           </div>
           <motion.div variants={widthGrow} className="h-1 bg-black"></motion.div>
         </motion.div>
@@ -207,7 +207,7 @@ const Footer = () => {
         >
 
           {/* Brand Column */}
-          <motion.div variants={fadeInUp} className="lg:col-span-5 pr-8">
+          <motion.div variants={fadeInUp} className="lg:col-span-4 pr-8">
             <h3 className="font-heading font-black text-4xl text-white mb-6 tracking-tighter">
               NAEEES<span className="text-[#22C55E]">.</span>
             </h3>
@@ -231,13 +231,20 @@ const Footer = () => {
 
           {/* Links Columns */}
           <motion.div variants={fadeInUp} className="lg:col-span-2">
-            <h4 className="font-black text-[#EAB308] mb-6 uppercase tracking-wider text-sm">Resources</h4>
+            <h4 className="font-black text-[#EAB308] mb-6 uppercase tracking-wider text-sm">Partnerships</h4>
             <ul className="space-y-4 text-gray-400 font-medium">
-              {['Lecture Notes', 'Past Questions', 'CGPA Calculator', 'Software Library'].map((item, i) => (
-                <motion.li key={item} whileHover={{ x: 5, color: "#ffffff" }} className="cursor-pointer">
-                  <span className="hover:underline decoration-[#22C55E] underline-offset-4">{item}</span>
-                </motion.li>
-              ))}
+              <motion.li whileHover={{ x: 5, color: "#ffffff" }} className="cursor-pointer">
+                <Link href="wa.me/+2348112110878" className="hover:underline decoration-[#22C55E] underline-offset-4">Events Featuring</Link>
+              </motion.li>
+              <motion.li whileHover={{ x: 5, color: "#ffffff" }} className="cursor-pointer">
+                <Link href="wa.me/+2348112110878" className="hover:underline decoration-[#22C55E] underline-offset-4">Adverstising</Link>
+              </motion.li>
+              <motion.li whileHover={{ x: 5, color: "#ffffff" }} className="cursor-pointer">
+                <Link href="wa.me/+2348112110878" className="hover:underline decoration-[#22C55E] underline-offset-4">Department Partnerships</Link>
+              </motion.li>
+              <motion.li whileHover={{ x: 5, color: "#ffffff" }} className="cursor-pointer">
+                <Link href="wa.me/+2348112110878" className="hover:underline decoration-[#22C55E] underline-offset-4">User Management</Link>
+              </motion.li>
             </ul>
           </motion.div>
 
@@ -277,18 +284,18 @@ const Footer = () => {
             </ul>
           </motion.div>
 
-          <motion.div variants={fadeInUp} className="lg:col-span-3">
+          <motion.div variants={fadeInUp} className="lg:col-span-2">
             <h4 className="font-black text-[#EAB308] mb-6 uppercase tracking-wider text-sm">Contact</h4>
             <ul className="space-y-4 text-gray-400 font-medium">
-              <li className="flex items-center gap-2"><span className="w-2 h-2 bg-[#22C55E] rounded-full animate-pulse"></span> <a href="mailto:support@naeees.com" className="hover:text-white transition-colors">Help & Support</a></li>
-              <li className="flex items-center gap-2"><span className="w-2 h-2 bg-[#22C55E] rounded-full animate-pulse"></span> <a href="mailto:feedback@naeees.com" className="hover:text-white transition-colors">Submit Feedback</a></li>
-              <motion.li
+              <li className="flex items-center gap-2"><span className="w-2 h-2 bg-[#22C55E] rounded-full animate-pulse"></span> <a href="wa.me/+2348112110878" className="hover:text-white transition-colors">Help & Support</a></li>
+              <li className="flex items-center gap-2"><span className="w-2 h-2 bg-[#22C55E] rounded-full animate-pulse"></span> <a href="wa.me/+2348112110878" className="hover:text-white transition-colors">Submit Feedback</a></li>
+              {/* <motion.li
                 whileHover={{ scale: 1.02 }}
                 className="mt-4 p-4 bg-gray-900 rounded-lg border border-gray-800 text-sm cursor-default"
               >
                 <span className="block text-[#EAB308] font-bold text-xs uppercase mb-1">Email Us</span>
                 naeees@futminna.edu.ng
-              </motion.li>
+              </motion.li> */}
             </ul>
           </motion.div>
 

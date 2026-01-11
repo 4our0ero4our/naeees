@@ -16,7 +16,8 @@ import {
     FaChartLine,
     FaBullhorn,
     FaComments,
-    FaArrowRight
+    FaArrowRight,
+    FaUserTie
 } from "react-icons/fa";
 
 // --- ANIMATION VARIANTS ---
@@ -39,11 +40,12 @@ const fadeInUp: Variants = {
 
 // --- CORE VALUES DATA ---
 const coreValues = [
-    { icon: <FaGraduationCap />, title: "Academic Excellence", desc: "Striving for the highest standards in learning and research." },
-    { icon: <FaLightbulb />, title: "Innovation", desc: "Fostering creativity to solve real-world engineering problems." },
-    { icon: <FaBolt />, title: "Integrity", desc: "Upholding ethical standards in all professional endeavors." },
-    { icon: <FaUsers />, title: "Collaboration", desc: "Building a supportive community for shared growth." },
-    { icon: <FaHandshake />, title: "Leadership", desc: "Empowering students to take initiative and serve." },
+    { icon: <FaGraduationCap />, title: "Academic Excellence", desc: " Commitment to high academic and professional standards." },
+    { icon: <FaLightbulb />, title: "Innovation", desc: "Encouraging creativity, research, and technological advancement." },
+    { icon: <FaBolt />, title: "Integrity", desc: "Upholding honesty, ethics, and responsibility in all activities." },
+    { icon: <FaUserTie />, title: "Professionalism", desc: "Preparing members for industry readiness and global relevance." },
+    { icon: <FaHandshake />, title: "Teamwork &amp; Unity", desc: "Fostering collaboration, inclusiveness, and mutual respect." },
+    { icon: <FaUserTie />, title: "Leadership", desc: "Developing responsible, visionary, and service-oriented leaders." },
 ];
 
 // --- FOCUS AREAS DATA ---
@@ -58,18 +60,20 @@ const focusAreas = [
 
 // --- EXECUTIVES DATA ---
 const executivesData = [
-    { id: 1, name: "Ibrahim Sadiq", role: "President", image: null, category: "Leadership" },
-    { id: 2, name: "Sarah Okafor", role: "Vice President", image: null, category: "Leadership" },
-    { id: 3, name: "Mohammed Ali", role: "Gen. Secretary", image: null, category: "Secretariat" },
-    { id: 4, name: "Chinedu Obi", role: "Academic Director", image: null, category: "Academic" },
-    { id: 5, name: "Fatima Yusuf", role: "Welfare Director", image: null, category: "Welfare" },
-    { id: 6, name: "Emeka Nnamdi", role: "P.R.O.", image: null, category: "Media" },
-    { id: 7, name: "Grace Adebayo", role: "Fin. Secretary", image: null, category: "Finance" },
-    { id: 8, name: "Tunde Bakare", role: "Social Director", image: null, category: "Social" },
-    { id: 9, name: "Aisha Bello", role: "Asst. Gen. Sec.", image: null, category: "Secretariat" },
-    { id: 10, name: "Samuel Kalu", role: "Technical Director", image: null, category: "Academic" },
-    { id: 11, name: "Esther Danjuma", role: "Sports Director", image: null, category: "Social" },
-    { id: 12, name: "Kabir Musa", role: "Treasurer", image: null, category: "Finance" },
+    { id: 1, name: "Anas Hamza", role: "President", image: "/Images/President.jpeg", category: "Leadership" },
+    { id: 2, name: "Isaiah Gift Dakoh", role: "Vice President", image: "/Images/Vice President.jpeg", category: "Leadership" },
+    { id: 3, name: "Ishaq-Lawal Abdulrahman Hisbullah", role: "Gen. Secretary", image: "/Images/General Secretary.jpeg", category: "Secretariat" },
+    { id: 11, name: "Dibal Gideon Abbagana", role: "Director of Sports", image: "/Images/Director of Sports.jpeg", category: "Social" },
+    { id: 4, name: "Kwaghfan A. Matthew", role: "Director of Projects", image: "/Images/Director of Projects.jpeg", category: "Academic" },
+    { id: 9, name: "Meshak Peter Dakat", role: "Asst. Director of Projects", image: "/Images/Asst. Director of Projects.jpeg", category: "Secretariat" },
+    { id: 14, name: "Mathias Onoja", role: "Director of Social", image: null, category: "Welfare" },
+    { id: 7, name: "Akwu Lawrence Onuche-Ojo", role: "Fin. Secretary", image: null, category: "Finance" },
+    { id: 13, name: "Yunusa Salihu", role: "Asst. Gen. Secretary", image: null, category: "Secretariat" },
+    { id: 5, name: "Modrecai Mana Shaaba", role: "Welfare Director", image: null, category: "Welfare" },
+    { id: 6, name: "Muhammad Rabiu Idris", role: "P.R.O.", image: null, category: "Media" },
+    // { id: 8, name: "Tunde Bakare", role: "Social Director", image: null, category: "Social" },
+    // { id: 10, name: "Samuel Kalu", role: "Technical Director", image: null, category: "Academic" },
+    { id: 12, name: "Amhiedamen Osaze Great", role: "Librarian", image: null, category: "Secretariat" },
 ];
 
 const galleryImages = [
@@ -113,7 +117,7 @@ const ExecutiveSection = () => {
                             NAEEES LEADERSHIP
                         </div>
                         <h2 className="text-5xl md:text-6xl font-black mb-8 uppercase leading-none">
-                            Meet Our<br /><span className="text-[#22C55E]">Team</span>.
+                            Meet The<br /><span className="text-[#22C55E]">Executives</span>.
                         </h2>
                         <p className="text-white text-lg mb-12 max-w-sm font-medium">
                             The dedicated students working behind the scenes to drive innovation and success for the department.
@@ -126,8 +130,8 @@ const ExecutiveSection = () => {
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
                                     className={`px-4 py-2 rounded-full font-bold text-sm border-2 transition-all ${activeTab === tab
-                                            ? "bg-white text-black border-white"
-                                            : "bg-transparent text-gray-500 border-gray-700 hover:border-white hover:text-white"
+                                        ? "bg-white text-black border-white"
+                                        : "bg-transparent text-gray-500 border-gray-700 hover:border-white hover:text-white"
                                         }`}
                                 >
                                     {tab}
@@ -171,9 +175,18 @@ const ExecutiveSection = () => {
                                     {/* Larger Image Area */}
                                     <div className="aspect-[4/5] bg-gray-900 relative">
                                         {/* Placeholder for Image */}
-                                        <div className="w-full h-full flex items-center justify-center text-gray-700">
+                                        {/* <div className="w-full h-full flex items-center justify-center text-gray-700">
                                             <FaUsers className="text-6xl" />
-                                        </div>
+                                        </div> */}
+                                        {/* <Image src={exec.image} alt={exec.name} width={1000} height={1000} className="w-full h-full object-cover" /> */}
+                                        {exec.image && (
+                                            <Image src={exec.image} alt={exec.name} width={1000} height={1000} className="w-full h-full object-cover" />
+                                        )}
+                                        {!exec.image && (
+                                            <div className="w-full h-full flex items-center justify-center text-gray-700">
+                                                <FaUsers className="text-6xl" />
+                                            </div>
+                                        )}
 
                                         {/* Overlay Gradient */}
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
@@ -337,15 +350,16 @@ export default function AboutPage() {
 
                             {/* Main Graphic Placeholder - Replace with actual image if available, or keep abstract */}
                             <div className="relative z-10 w-full h-full border-4 border-black rounded-[2rem] bg-white shadow-[12px_12px_0px_0px_black] overflow-hidden flex items-center justify-center p-8">
-                                <div className="grid grid-cols-2 gap-4 w-full h-full opacity-10">
+                                {/* <div className="grid grid-cols-2 gap-4 w-full h-full opacity-10">
                                     {[...Array(16)].map((_, i) => (
                                         <div key={i} className="border-2 border-dashed border-black rounded-lg"></div>
                                     ))}
-                                </div>
-                                <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+                                </div> */}
+                                <Image src="/Images/About Featured Image.jpeg" alt="About Hero" width={1000} height={1000} className="w-full h-full object-cover" />
+                                {/* <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
                                     <FaBolt className="text-8xl text-black mb-4" />
                                     <h3 className="font-black text-3xl uppercase">Empowering<br />Students</h3>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </motion.div>
@@ -376,7 +390,7 @@ export default function AboutPage() {
                             </div>
                             <h3 className="text-3xl font-black mb-4 uppercase">Our Mission</h3>
                             <p className="text-gray-300 text-lg font-medium leading-relaxed">
-                                To empower students, particularly Electrical and Electronics Engineering students by providing access to academic resources, technical opportunities, mentorship, and professional development experiences that enhance competence and confidence.
+                                To promote academic excellence, skills development, professional growth, and unity among electrical and electronic engineering students through learning, innovation, mentorship, extracurricular activities and industry engagement.
                             </p>
                         </div>
 
@@ -387,7 +401,7 @@ export default function AboutPage() {
                             </div>
                             <h3 className="text-3xl font-black mb-4 uppercase">Our Vision</h3>
                             <p className="text-gray-700 text-lg font-medium leading-relaxed">
-                                To be a leading student engineering association that produces technically sound, innovative, and ethically responsible engineers who contribute meaningfully to society.
+                                To be a leading student engineering association that supports innovative, competent, and ethically sound electrical and electronic engineers who positively impact society and industry.
                             </p>
                         </div>
 
@@ -469,7 +483,7 @@ export default function AboutPage() {
                                 </div>
                                 <div className="text-center mt-8">
                                     <h4 className="text-white font-black text-2xl mb-2">NAEEES PORTAL</h4>
-                                    <p className="text-sm">Connecting Students Digitally</p>
+                                    <p className="text-sm mt-6">Connecting Students Digitally</p>
                                 </div>
                                 {/* Abstract Grid content */}
                                 <div className="grid grid-cols-3 gap-4 p-8 w-full opacity-30">

@@ -104,7 +104,7 @@ const EventsSection = () => {
               </div>
             </motion.div>
             <motion.h2 variants={fadeInUp} className="font-heading font-black text-4xl sm:text-6xl text-black leading-[1.1]">
-              Don't Miss Out on<br /> Campus Action.
+              Don't Miss Out on<br /> Campus Events.
             </motion.h2>
           </div>
 

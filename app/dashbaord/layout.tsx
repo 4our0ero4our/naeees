@@ -69,17 +69,17 @@ const SidebarContent = ({
 
           {!isCollapsed && (
             <Link href="/">
-            <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-              className="flex flex-col overflow-hidden whitespace-nowrap"
-            >
-              <span className="font-heading font-black text-xl tracking-tight leading-none">
-                NAEEES<span className="text-[#22C55E]">.</span>
-              </span>
-              <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mt-0.5">
-                {(session as any)?.user?.role?.replace('_', ' ')}
-              </span>
-            </motion.div>
+              <motion.div
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                className="flex flex-col overflow-hidden whitespace-nowrap"
+              >
+                <span className="font-heading font-black text-xl tracking-tight leading-none">
+                  NAEEES<span className="text-[#22C55E]">.</span>
+                </span>
+                <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mt-0.5">
+                  {(session as any)?.user?.role?.replace('_', ' ')}
+                </span>
+              </motion.div>
             </Link>
           )}
         </div>
@@ -317,10 +317,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <FaBars className="text-xl" />
               </button>
               <div className="flex-1">
-                <h1 className="font-heading font-black text-3xl sm:text-4xl lg:text-5xl text-black mb-2 leading-tight">
+                <h1 className="font-heading font-black text-xl sm:text-4xl lg:text-5xl text-black sm:mb-2 leading-tight">
                   {pageInfo.title}
                 </h1>
-                <p className="text-base sm:text-lg lg:text-xl text-gray-600 font-medium">
+                <p className="hidden sm:block text-base sm:text-lg lg:text-xl text-gray-600 font-medium">
                   {pageInfo.subtitle}
                 </p>
               </div>
@@ -342,7 +342,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Scrollable Main Content */}
         {/* Padding-top to prevent overlap with fixed header - adjusted for actual header height */}
-        <main className="h-screen overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8 bg-[#F8F9FA] pt-[140px] sm:pt-[150px] lg:pt-[160px]">
+        <main className="h-screen overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8 bg-[#F8F9FA] pt-[80px] sm:pt-[150px] lg:pt-[160px]">
           <div className="max-w-[1600px] mx-auto pb-20">
             {children}
           </div>

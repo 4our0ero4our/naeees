@@ -263,7 +263,7 @@ function EditorContent() {
                 onConfirm={confirmState.onConfirm}
                 title={confirmState.title}
                 message={confirmState.message}
-                isDanger={true}
+                isDangerous={true}
                 confirmText="Discard & Leave"
             />
 
