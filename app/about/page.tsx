@@ -248,14 +248,15 @@ const GallerySection = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[300px]">
                     {/* 1. Large Feature */}
-                    <div className="md:col-span-2 lg:col-span-2 row-span-2 bg-gray-100 rounded-2xl border-4 border-black relative overflow-hidden group">
-                        <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
+                    {/* <div className="md:col-span-2 lg:col-span-2 row-span-2 bg-gray-100 rounded-2xl border-4 border-black relative overflow-hidden group"> */}
+                        {/* <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
                             <span className="font-black text-gray-400 text-6xl">1</span>
-                        </div>
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        </div> */}
+                        {/* <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                             <FaComments className="text-white text-6xl" />
-                        </div>
-                    </div>
+                        </div> */}
+                        <Image src="/Images/Gallery 1.jpeg" alt="Gallery 1" width={1000} height={1000} className="w-full h-full object-cover" />
+                    {/* </div> */}
 
                     {/* 2. Portrait */}
                     <div className="bg-gray-100 rounded-2xl border-4 border-black relative overflow-hidden group">
@@ -564,3 +565,5 @@ export default function AboutPage() {
         </main>
     );
 }
+
+
